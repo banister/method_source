@@ -5,6 +5,9 @@ method_source
 
 _retrieve the sourcecode for a method_
 
+*NOTE:* This is nothing fancy; it simply utilizes `Method#source_location`
+in Ruby 1.9
+
 `method_source` is a utility to return a method's sourcecode as a
 Ruby string. Also returns `Proc` and `Lambda` sourcecode.
 
