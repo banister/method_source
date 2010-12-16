@@ -14,7 +14,7 @@ Ruby string. Also returns `Proc` and `Lambda` sourcecode.
 It is written in pure Ruby (no C).
 
 `method_source` provides the `source` method to the `Method` and
-`UnboundMethod` classes.
+`UnboundMethod` and `Proc` classes.
 
 * Install the [gem](https://rubygems.org/gems/method_source): `gem install method_source`
 * Read the [documentation](http://rdoc.info/github/banister/method_source/master/file/README.markdown)
