@@ -6,7 +6,7 @@ method_source
 _retrieve the sourcecode for a method_
 
 `method_source` is a utility to return a method's sourcecode as a
-Ruby string.
+Ruby string. Also returns `Proc` and `Lambda` sourcecode.
 
 It is written in pure Ruby (no C).
 
@@ -17,8 +17,8 @@ It is written in pure Ruby (no C).
 * Read the [documentation](http://rdoc.info/github/banister/method_source/master/file/README.markdown)
 * See the [source code](http://github.com/banister/method_source)
 
-example: 
----------
+Example: methods
+----------------
 
     Set.instance_method(:merge).source.display
     # =>
@@ -35,7 +35,7 @@ example:
 Limitations:
 ------------
 
-* Only works with Ruby 1.9+
+* Only works with Ruby 1.9+ (YARV)
 * Cannot return source for C methods.
 * Cannot return source for dynamically defined methods.
 

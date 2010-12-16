@@ -92,3 +92,7 @@ end
 class UnboundMethod
   include MethodSource::MethodExtensions
 end
+
+class Proc
+  include MethodSource::MethodExtensions
+end
