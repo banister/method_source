@@ -20,9 +20,8 @@ module MethodSource
     !!Ripper::SexpBuilder.new(code).parse
   end
 
-  # Helper method responsible for opening source file and advancing to
-  # the correct linenumber. Defined here to avoid polluting `Method`
-  # class.
+  # Helper method responsible for extracting method body.
+  # Defined here to avoid polluting `Method` class.
   # @param [Array] source_location The array returned by Method#source_location
   # @return [File] The opened source file
   def self.source_helper(source_location)
@@ -31,7 +30,44 @@ module MethodSource
     file_name, line = source_location
     file = File.open(file_name)
     (line - 1).times { file.readline }
-    file
+
+    code = ""
+    loop do
+      val = file.readline
+      code << val
+      
+      return code if MethodSource.valid_expression?(code)
+    end
+    
+  ensure
+    file.close if file
+  end
+  
+  # Helper method responsible for opening source file and buffering up
+  # the comments for a specified method. Defined here to avoid polluting 
+  # `Method` class.
+  # @param [Array] source_location The array returned by Method#source_location
+  # @return [String] The comments up to the point of the method.
+  def self.comment_helper(source_location)
+    return nil if !source_location.is_a?(Array)
+    
+    file_name, line = source_location
+    file = File.open(file_name)
+    buffer = ""
+    (line - 1).times do
+      line = file.readline
+      # Add any line that is a valid ruby comment, 
+      # but clear as soon as we hit a non comment line.
+      if (line =~ /^\s*#/) || (line =~ /^\s*$/)
+        buffer << line.lstrip
+      else
+        buffer.clear
+      end
+    end
+    
+    buffer
+  ensure
+    file.close if file
   end
   
   # This module is to be included by `Method` and `UnboundMethod` and
@@ -49,26 +85,34 @@ module MethodSource
     #       self
     #     end
     def source
-      file = nil
-      
       if respond_to?(:source_location)
-        file = MethodSource.source_helper(source_location)
+        source = MethodSource.source_helper(source_location)
         
-        raise "Cannot locate source for this method: #{name}" if !file
+        raise "Cannot locate source for this method: #{name}" if !source
       else
         raise "Method#source not supported by this Ruby version (#{RUBY_VERSION})"
       end
-
-      code = ""
-      loop do
-        val = file.readline
-        code += val
-        
-        return code if MethodSource.valid_expression?(code)
-      end
       
-    ensure
-      file.close if file
+      source
+    end
+    
+    # Return the comments associated with the method as a string.
+    # (This functionality is only supported in Ruby 1.9 and above)
+    # @return [String] The method's comments as a string
+    # @example
+    #  Set.instance_method(:clear).comment.display
+    #  =>
+    #     # Removes all elements and returns self.
+    def comment
+      if respond_to?(:source_location)
+        comment = MethodSource.comment_helper(source_location)
+        
+        raise "Cannot locate source for this method: #{name}" if !comment
+      else
+        raise "Method#comment not supported by this Ruby version (#{RUBY_VERSION})"
+      end
+
+      comment
     end
   end
 end
