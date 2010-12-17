@@ -38,7 +38,7 @@ Example: methods
 Limitations:
 ------------
 
-* Only works with Ruby 1.9+ (YARV)
+* Only works with Ruby 1.9+ 
 * Cannot return source for C methods.
 * Cannot return source for dynamically defined methods.
 
