@@ -6,6 +6,10 @@ direc = File.dirname(__FILE__)
 require 'stringio'
 require "#{direc}/method_source/version"
 
+if RUBY_VERSION =~ /1.9/
+  require 'ripper'
+end
+
 module MethodSource
 
   # Helper method used to find end of method body
@@ -13,23 +17,7 @@ module MethodSource
   # correctness
   # @return [Boolean] 
   def self.valid_expression?(code)
-    suppress_stderr do
-      RubyVM::InstructionSequence.new(code)
-    end
-  rescue Exception
-    false
-  else
-    true
-  end
-
-  # Helper method used to suppress stderr output by the
-  # `RubyVM::InstructionSequence` method
-  # @yield The block where stderr is suppressed
-  def self.suppress_stderr
-    real_stderr, $stderr = $stderr, StringIO.new
-    yield
-  ensure
-    $stderr = real_stderr
+    !!Ripper::SexpBuilder.new(code).parse
   end
 
   # Helper method responsible for opening source file and advancing to
