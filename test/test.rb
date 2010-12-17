@@ -4,12 +4,14 @@ require 'bacon'
 require "#{direc}/../lib/method_source"
 
 hello_source = "def hello; :hello; end\n"
-hello_comment = "# A comment for hello"
+hello_comment = "# A comment for hello\n\n# It spans two lines"
 lambda_comment = "# This is a comment for MyLambda"
 lambda_source = "MyLambda = lambda { :lambda }\n"
 proc_source = "MyProc = Proc.new { :proc }\n"
 
 # A comment for hello
+
+# It spans two lines
 def hello; :hello; end
 
 # This is a comment for MyLambda
