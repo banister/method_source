@@ -3,7 +3,6 @@
 
 direc = File.dirname(__FILE__)
 
-require 'stringio'
 require "#{direc}/method_source/version"
 
 if RUBY_VERSION =~ /1.9/
@@ -36,7 +35,7 @@ module MethodSource
       val = file.readline
       code << val
       
-      return code if MethodSource.valid_expression?(code)
+      return code if valid_expression?(code)
     end
     
   ensure
