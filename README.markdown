@@ -5,8 +5,8 @@ method_source
 
 _retrieve the sourcecode for a method_
 
-*NOTE:* This is nothing fancy; it simply utilizes `Method#source_location`
-in Ruby 1.9
+*NOTE:* This simply utilizes `Method#source_location` in Ruby 1.9; it
+ does not access the live AST.
 
 `method_source` is a utility to return a method's sourcecode as a
 Ruby string. Also returns `Proc` and `Lambda` sourcecode.
@@ -43,7 +43,7 @@ Example: display method comments
     Set.instance_method(:merge).comment.display
     # =>
     # Merges the elements of the given enumerable object to the set and
-    # returns self.=> nil
+    # returns self.
 
 Limitations:
 ------------
