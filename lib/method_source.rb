@@ -27,19 +27,17 @@ module MethodSource
     return nil if !source_location.is_a?(Array)
     
     file_name, line = source_location
-    file = File.open(file_name)
-    (line - 1).times { file.readline }
+    File.open(file_name) do |file|
+      (line - 1).times { file.readline }
 
-    code = ""
-    loop do
-      val = file.readline
-      code << val
-      
-      return code if valid_expression?(code)
-    end
-    
-  ensure
-    file.close if file
+      code = ""
+      loop do
+        val = file.readline
+        code << val
+        
+        return code if valid_expression?(code)
+      end
+    end    
   end
   
   # Helper method responsible for opening source file and buffering up
@@ -51,22 +49,21 @@ module MethodSource
     return nil if !source_location.is_a?(Array)
     
     file_name, line = source_location
-    file = File.open(file_name)
-    buffer = ""
-    (line - 1).times do
-      line = file.readline
-      # Add any line that is a valid ruby comment, 
-      # but clear as soon as we hit a non comment line.
-      if (line =~ /^\s*#/) || (line =~ /^\s*$/)
-        buffer << line.lstrip
-      else
-        buffer.clear
+    File.open(file_name) do |file|
+      buffer = ""
+      (line - 1).times do
+        line = file.readline
+        # Add any line that is a valid ruby comment, 
+        # but clear as soon as we hit a non comment line.
+        if (line =~ /^\s*#/) || (line =~ /^\s*$/)
+          buffer << line.lstrip
+        else
+          buffer.clear
+        end
       end
+      
+      buffer
     end
-    
-    buffer
-  ensure
-    file.close if file
   end
   
   # This module is to be included by `Method` and `UnboundMethod` and
