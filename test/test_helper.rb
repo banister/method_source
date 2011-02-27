@@ -1,9 +1,3 @@
-class String
-  def clear
-    replace("")
-  end
-end
-
 module M
   def hello; :hello_module; end
 end

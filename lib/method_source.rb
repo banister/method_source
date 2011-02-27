@@ -80,7 +80,7 @@ module MethodSource
         if (line =~ /^\s*#/) || (line =~ /^\s*$/)
           buffer << line.lstrip
         else
-          buffer.clear
+          buffer.replace("")
         end
       end
       
