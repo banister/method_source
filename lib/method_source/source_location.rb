@@ -1,6 +1,7 @@
 module MethodSource
   module SourceLocation
     module MethodExtensions
+
       def trace_func(event, file, line, id, binding, classname)
         return unless event == 'call'
         set_trace_func nil 
@@ -8,6 +9,8 @@ module MethodSource
         @file, @line = file, line
         raise :found
       end
+
+      private :trace_func
       
       # Return the source location of a method for Ruby 1.8.
       # @return [Array] A two element array. First element is the
@@ -37,7 +40,8 @@ module MethodSource
                 when Class
                   owner
                 when Module
-                  Class.new.tap { |v| v.send(:include, owner) }
+                  method_owner = owner
+                  Class.new { include(method_owner) }
                 end
 
         begin

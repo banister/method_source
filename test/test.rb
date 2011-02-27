@@ -7,6 +7,8 @@ require "#{direc}/test_helper"
 describe MethodSource do
 
   before do
+    @hello_module_source = "  def hello; :hello_module; end\n"
+    @hello_singleton_source = "def $o.hello; :hello_singleton; end\n"
     @hello_source = "def hello; :hello; end\n"
     @hello_comment = "# A comment for hello\n# It spans two lines and is indented by 2 spaces\n"
     @lambda_comment = "# This is a comment for MyLambda\n"
@@ -24,6 +26,19 @@ describe MethodSource do
     it 'should return source for method' do
       method(:hello).source.should == @hello_source
     end
+
+    it 'should return source for a method defined in a module' do
+      M.instance_method(:hello).source.should == @hello_module_source
+    end
+
+    it 'should return source for a singleton method as an instance method' do
+      class << $o; self; end.instance_method(:hello).source.should == @hello_singleton_source
+    end
+
+    it 'should return source for a singleton method' do
+      $o.method(:hello).source.should == @hello_singleton_source
+    end
+    
     
     it 'should return a comment for method' do
       method(:hello).comment.should == @hello_comment
