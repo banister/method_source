@@ -1,4 +1,10 @@
-  # A comment for hello
+class String
+  def clear
+    replace("")
+  end
+end
+
+# A comment for hello
   
   # It spans two lines and is indented by 2 spaces
 def hello; :hello; end

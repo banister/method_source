@@ -21,28 +21,21 @@ describe MethodSource do
   end
 
   describe "Methods" do
-    if RUBY_VERSION =~ /1.9/
-      it 'should return source for method' do
-        method(:hello).source.should == @hello_source
-      end
-      
-      it 'should return a comment for method' do
-        method(:hello).comment.should == @hello_comment
-      end
+    it 'should return source for method' do
+      method(:hello).source.should == @hello_source
+    end
+    
+    it 'should return a comment for method' do
+      method(:hello).comment.should == @hello_comment
+    end
 
-      it 'should raise for C methods' do
-        lambda { method(:puts).source }.should.raise RuntimeError
-      end
-
-    else
-      it 'should raise on #source for 1.8' do
-        lambda { method(:hello).source }.should.raise RuntimeError
-      end
+    it 'should raise for C methods' do
+      lambda { method(:puts).source }.should.raise RuntimeError
     end
   end
 
-  describe "Lambdas and Procs" do
-    if RUBY_VERSION =~ /1.9/
+  if RUBY_VERSION =~ /1.9/
+    describe "Lambdas and Procs" do
       it 'should return source for proc' do
         MyProc.source.should == @proc_source
       end
@@ -58,42 +51,35 @@ describe MethodSource do
       it 'should return comment for lambda' do
         MyLambda.comment.should == @lambda_comment
       end
-    else
-      it 'should raise on #source for 1.8' do
-        lambda { method(:hello).source }.should.raise RuntimeError
-      end
     end      
   end
-
-  if RUBY_VERSION =~ /1.9/
-    describe "Comment tests" do
-      before do
-        @comment1 = "# a\n# b\n"
-        @comment2 = "# a\n# b\n"
-        @comment3 = "# a\n#\n# b\n"
-        @comment4 = "# a\n# b\n"
-        @comment5 = "# a\n# b\n# c\n# d\n"
-      end
-
-      it "should correctly extract multi-line comments" do
-        method(:comment_test1).comment.should == @comment1
-      end
-
-      it "should correctly strip leading whitespace before comments" do
-        method(:comment_test2).comment.should == @comment2
-      end
-
-      it "should keep empty comment lines" do
-        method(:comment_test3).comment.should == @comment3
-      end
-      
-      it "should ignore blank lines between comments" do
-        method(:comment_test4).comment.should == @comment4
-      end
-
-      it "should align all comments to same indent level" do
-        method(:comment_test5).comment.should == @comment5
-      end      
+  describe "Comment tests" do
+    before do
+      @comment1 = "# a\n# b\n"
+      @comment2 = "# a\n# b\n"
+      @comment3 = "# a\n#\n# b\n"
+      @comment4 = "# a\n# b\n"
+      @comment5 = "# a\n# b\n# c\n# d\n"
     end
+
+    it "should correctly extract multi-line comments" do
+      method(:comment_test1).comment.should == @comment1
+    end
+
+    it "should correctly strip leading whitespace before comments" do
+      method(:comment_test2).comment.should == @comment2
+    end
+
+    it "should keep empty comment lines" do
+      method(:comment_test3).comment.should == @comment3
+    end
+    
+    it "should ignore blank lines between comments" do
+      method(:comment_test4).comment.should == @comment4
+    end
+
+    it "should align all comments to same indent level" do
+      method(:comment_test5).comment.should == @comment5
+    end      
   end
 end

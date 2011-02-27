@@ -4,19 +4,41 @@
 direc = File.dirname(__FILE__)
 
 require "#{direc}/method_source/version"
-
-if RUBY_VERSION =~ /1.9/
-  require 'ripper'
-end
+require "#{direc}/method_source/source_location"
 
 module MethodSource
 
-  # Helper method used to find end of method body
-  # @param [String] code The string of Ruby code to check for
-  # correctness
-  # @return [Boolean] 
-  def self.valid_expression?(code)
-    !!Ripper::SexpBuilder.new(code).parse
+  if RUBY_VERSION =~ /1.9/
+    require 'ripper'
+
+    # Determine if a string of code is a valid Ruby expression.
+    # Ruby 1.9 uses Ripper, Ruby 1.8 uses RubyParser.
+    # @param [String] code The code to validate.
+    # @return [Boolean] Whether or not the code is a valid Ruby expression.
+    # @example
+    #   valid_expression?("class Hello") #=> false
+    #   valid_expression?("class Hello; end") #=> true
+    def self.valid_expression?(code)
+      !!Ripper::SexpBuilder.new(code).parse
+    end
+
+  else
+    require 'ruby_parser'
+
+    # Determine if a string of code is a valid Ruby expression.
+    # Ruby 1.9 uses Ripper, Ruby 1.8 uses RubyParser.
+    # @param [String] code The code to validate.
+    # @return [Boolean] Whether or not the code is a valid Ruby expression.
+    # @example
+    #   valid_expression?("class Hello") #=> false
+    #   valid_expression?("class Hello; end") #=> true
+    def self.valid_expression?(code)
+      RubyParser.new.parse(code)
+    rescue Racc::ParseError, SyntaxError
+      false
+    else
+      true
+    end
   end
 
   # Helper method responsible for extracting method body.
@@ -86,7 +108,7 @@ module MethodSource
         
         raise "Cannot locate source for this method: #{name}" if !source
       else
-        raise "Method#source not supported by this Ruby version (#{RUBY_VERSION})"
+        raise "#{self.class}#source not supported by this Ruby version (#{RUBY_VERSION})"
       end
       
       source
@@ -105,7 +127,7 @@ module MethodSource
         
         raise "Cannot locate source for this method: #{name}" if !comment
       else
-        raise "Method#comment not supported by this Ruby version (#{RUBY_VERSION})"
+        raise "#{self.class}#comment not supported by this Ruby version (#{RUBY_VERSION})"
       end
 
       comment
@@ -114,10 +136,12 @@ module MethodSource
 end
 
 class Method
+  include MethodSource::SourceLocation::MethodExtensions
   include MethodSource::MethodExtensions
 end
 
 class UnboundMethod
+  include MethodSource::SourceLocation::UnboundMethodExtensions
   include MethodSource::MethodExtensions
 end
 

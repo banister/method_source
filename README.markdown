@@ -1,11 +1,11 @@
 method_source
 =============
 
-(C) John Mair (banisterfiend) 2010
+(C) John Mair (banisterfiend) 2011
 
 _retrieve the sourcecode for a method_
 
-*NOTE:* This simply utilizes `Method#source_location` in Ruby 1.9; it
+*NOTE:* This simply utilizes `Method#source_location`; it
  does not access the live AST.
 
 `method_source` is a utility to return a method's sourcecode as a
@@ -14,6 +14,8 @@ Ruby string. Also returns `Proc` and `Lambda` sourcecode.
 Method comments can also be extracted using the `comment` method.
 
 It is written in pure Ruby (no C).
+
+* Some Ruby 1.8 support now available. 
 
 `method_source` provides the `source` and `comment` methods to the `Method` and
 `UnboundMethod` and `Proc` classes.
@@ -48,19 +50,14 @@ Example: display method comments
 Limitations:
 ------------
 
-* Only works with Ruby 1.9+ 
+* Proc#source not available in Ruby 1.8
+* Occasional strange behaviour in Ruby 1.8
 * Cannot return source for C methods.
 * Cannot return source for dynamically defined methods.
-
-Possible Applications:
-----------------------
-
-* Combine with [RubyParser](https://github.com/seattlerb/ruby_parser)
-  for extra fun.
-
 
 Special Thanks
 --------------
 
 [Adam Sanderson](https://github.com/adamsanderson) for `comment` functionality.
 
+[Dmitry Elastic](https://github.com/dmitryelastic) for the brilliant Ruby 1.8 `source_location` hack.
