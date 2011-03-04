@@ -1,4 +1,4 @@
-# (C) John Mair (banisterfiend) 2010
+# (C) John Mair (banisterfiend) 2011
 # MIT License
 
 direc = File.dirname(__FILE__)
