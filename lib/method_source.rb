@@ -91,6 +91,30 @@ module MethodSource
   # This module is to be included by `Method` and `UnboundMethod` and
   # provides the `#source` functionality
   module MethodExtensions
+
+    # We use the included hook to patch Method#source on rubinius.
+    # We need to use the included hook as Rubinius defines a `source`
+    # on Method so including a module will have no effect (as it's
+    # higher up the MRO).
+    # @param [Class] klass The class that includes the module.
+    def self.included(klass)
+      if klass.method_defined?(:source) && Object.const_defined?(:RUBY_ENGINE) &&
+          RUBY_ENGINE =~ /rbx/
+
+        klass.class_eval do
+          orig_source = instance_method(:source)
+          
+          define_method(:source) do
+            begin
+              super
+            rescue
+              orig_source.bind(self).call
+            end
+          end
+          
+          end
+        end
+    end
     
     # Return the sourcecode for the method as a string
     # (This functionality is only supported in Ruby 1.9 and above)
