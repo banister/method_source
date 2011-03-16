@@ -44,6 +44,20 @@ module MethodSource
                   Class.new { include(method_owner) }
                 end
 
+        # deal with immediate values
+        case
+        when klass == Symbol
+          return :a.method(name).source_location
+        when klass == Fixnum
+          return 0.method(name).source_location
+        when klass == TrueClass
+          return true.method(name).source_location
+        when klass == FalseClass
+          return false.method(name).source_location
+        when klass == NilClass
+          return nil.method(name).source_location
+        end
+        
         begin
           klass.allocate.method(name).source_location
         rescue TypeError

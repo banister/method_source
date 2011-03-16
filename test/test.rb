@@ -1,10 +1,29 @@
 direc = File.dirname(__FILE__)
 
+require 'rubygems'
 require 'bacon'
 require "#{direc}/../lib/method_source"
 require "#{direc}/test_helper"
 
 describe MethodSource do
+
+  describe "source_location (testing 1.8 implementation)" do
+    it 'should return correct source_location for a method' do
+      method(:hello).source_location.first.should =~ /test_helper/
+    end
+    
+    it 'should not raise for immediate instance methods' do
+      [Symbol, Fixnum, TrueClass, FalseClass, NilClass].each do |immediate_class|
+        lambda { immediate_class.instance_method(:to_s).source_location }.should.not.raise
+      end
+    end
+
+    it 'should not raise for immediate methods' do
+      [:a, 1, true, false, nil].each do |immediate|
+        lambda { immediate.method(:to_s).source_location }.should.not.raise
+      end
+    end
+  end
 
   before do
     @hello_module_source = "  def hello; :hello_module; end\n"
