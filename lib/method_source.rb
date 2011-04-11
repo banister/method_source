@@ -8,7 +8,7 @@ require "#{direc}/method_source/source_location"
 
 module MethodSource
 
-  if RUBY_VERSION =~ /1.9/
+  if RUBY_VERSION =~ /1.9/ && RUBY_ENGINE == "ruby"
     require 'ripper'
 
     # Determine if a string of code is a valid Ruby expression.
