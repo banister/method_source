@@ -21,7 +21,7 @@ module MethodSource
           args =[*(1..(arity<-1 ? -arity-1 : arity ))]
           
           set_trace_func method(:trace_func).to_proc
-          call *args rescue nil
+          call(*args) rescue nil
           set_trace_func nil 
           @file = File.expand_path(@file) if @file && File.exist?(File.expand_path(@file))
         end

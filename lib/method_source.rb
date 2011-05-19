@@ -112,8 +112,8 @@ module MethodSource
             end
           end
           
-          end
         end
+      end
     end
     
     # Return the sourcecode for the method as a string
