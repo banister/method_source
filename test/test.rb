@@ -11,7 +11,7 @@ describe MethodSource do
     it 'should return correct source_location for a method' do
       method(:hello).source_location.first.should =~ /test_helper/
     end
-    
+
     it 'should not raise for immediate instance methods' do
       [Symbol, Fixnum, TrueClass, FalseClass, NilClass].each do |immediate_class|
         lambda { immediate_class.instance_method(:to_s).source_location }.should.not.raise
@@ -34,7 +34,7 @@ describe MethodSource do
     @lambda_source = "MyLambda = lambda { :lambda }\n"
     @proc_source = "MyProc = Proc.new { :proc }\n"
   end
-  
+
   it 'should define methods on Method and UnboundMethod and Proc' do
     Method.method_defined?(:source).should == true
     UnboundMethod.method_defined?(:source).should == true
@@ -57,35 +57,38 @@ describe MethodSource do
     it 'should return source for a singleton method' do
       $o.method(:hello).source.should == @hello_singleton_source
     end
-    
-    
+
+
     it 'should return a comment for method' do
       method(:hello).comment.should == @hello_comment
     end
 
-    it 'should raise for C methods' do
-      lambda { method(:puts).source }.should.raise RuntimeError
+
+    if !is_rbx?
+      it 'should raise for C methods' do
+        lambda { method(:puts).source }.should.raise RuntimeError
+      end
     end
   end
 
-  if RUBY_VERSION =~ /1.9/
+  if RUBY_VERSION =~ /1.9/ || is_rbx?
     describe "Lambdas and Procs" do
       it 'should return source for proc' do
         MyProc.source.should == @proc_source
       end
-      
+
       it 'should return an empty string if there is no comment' do
         MyProc.comment.should == ''
       end
-      
+
       it 'should return source for lambda' do
         MyLambda.source.should == @lambda_source
       end
-      
+
       it 'should return comment for lambda' do
         MyLambda.comment.should == @lambda_comment
       end
-    end      
+    end
   end
   describe "Comment tests" do
     before do
@@ -107,13 +110,13 @@ describe MethodSource do
     it "should keep empty comment lines" do
       method(:comment_test3).comment.should == @comment3
     end
-    
+
     it "should ignore blank lines between comments" do
       method(:comment_test4).comment.should == @comment4
     end
 
     it "should align all comments to same indent level" do
       method(:comment_test5).comment.should == @comment5
-    end      
+    end
   end
 end

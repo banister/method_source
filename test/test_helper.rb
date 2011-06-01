@@ -1,3 +1,7 @@
+def is_rbx?
+  defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /rbx/
+end
+
 module M
   def hello; :hello_module; end
 end
@@ -6,7 +10,7 @@ $o = Object.new
 def $o.hello; :hello_singleton; end
 
 # A comment for hello
-  
+
   # It spans two lines and is indented by 2 spaces
 def hello; :hello; end
 

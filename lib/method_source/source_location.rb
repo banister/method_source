@@ -4,14 +4,14 @@ module MethodSource
 
       def trace_func(event, file, line, id, binding, classname)
         return unless event == 'call'
-        set_trace_func nil 
-        
+        set_trace_func nil
+
         @file, @line = file, line
         raise :found
       end
 
       private :trace_func
-      
+
       # Return the source location of a method for Ruby 1.8.
       # @return [Array] A two element array. First element is the
       #   file, second element is the line in the file where the
@@ -19,13 +19,25 @@ module MethodSource
       def source_location
         if @file.nil?
           args =[*(1..(arity<-1 ? -arity-1 : arity ))]
-          
+
           set_trace_func method(:trace_func).to_proc
           call(*args) rescue nil
-          set_trace_func nil 
+          set_trace_func nil
           @file = File.expand_path(@file) if @file && File.exist?(File.expand_path(@file))
         end
         return [@file, @line] if File.exist?(@file.to_s)
+      end
+    end
+
+    # Rubinius only
+    module ProcExtensions
+
+      # Return the source location for a Proc (Rubinius only)
+      # @return [Array] A two element array. First element is the
+      #   file, second element is the line in the file where the
+      #   proc definition is found.
+      def source_location
+        [block.file.to_s, block.line]
       end
     end
 
@@ -57,7 +69,7 @@ module MethodSource
         when klass == NilClass
           return nil.method(name).source_location
         end
-        
+
         begin
           klass.allocate.method(name).source_location
         rescue TypeError

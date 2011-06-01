@@ -47,7 +47,7 @@ module MethodSource
   # @return [File] The opened source file
   def self.source_helper(source_location)
     return nil if !source_location.is_a?(Array)
-    
+
     file_name, line = source_location
     File.open(file_name) do |file|
       (line - 1).times { file.readline }
@@ -56,26 +56,26 @@ module MethodSource
       loop do
         val = file.readline
         code << val
-        
+
         return code if valid_expression?(code)
       end
-    end    
+    end
   end
-  
+
   # Helper method responsible for opening source file and buffering up
-  # the comments for a specified method. Defined here to avoid polluting 
+  # the comments for a specified method. Defined here to avoid polluting
   # `Method` class.
   # @param [Array] source_location The array returned by Method#source_location
   # @return [String] The comments up to the point of the method.
   def self.comment_helper(source_location)
     return nil if !source_location.is_a?(Array)
-    
+
     file_name, line = source_location
     File.open(file_name) do |file|
       buffer = ""
       (line - 1).times do
         line = file.readline
-        # Add any line that is a valid ruby comment, 
+        # Add any line that is a valid ruby comment,
         # but clear as soon as we hit a non comment line.
         if (line =~ /^\s*#/) || (line =~ /^\s*$/)
           buffer << line.lstrip
@@ -83,11 +83,11 @@ module MethodSource
           buffer.replace("")
         end
       end
-      
+
       buffer
     end
   end
-  
+
   # This module is to be included by `Method` and `UnboundMethod` and
   # provides the `#source` functionality
   module MethodExtensions
@@ -103,7 +103,7 @@ module MethodSource
 
         klass.class_eval do
           orig_source = instance_method(:source)
-          
+
           define_method(:source) do
             begin
               super
@@ -111,11 +111,11 @@ module MethodSource
               orig_source.bind(self).call
             end
           end
-          
+
         end
       end
     end
-    
+
     # Return the sourcecode for the method as a string
     # (This functionality is only supported in Ruby 1.9 and above)
     # @return [String] The method sourcecode as a string
@@ -129,15 +129,15 @@ module MethodSource
     def source
       if respond_to?(:source_location)
         source = MethodSource.source_helper(source_location)
-        
+
         raise "Cannot locate source for this method: #{name}" if !source
       else
         raise "#{self.class}#source not supported by this Ruby version (#{RUBY_VERSION})"
       end
-      
+
       source
     end
-    
+
     # Return the comments associated with the method as a string.
     # (This functionality is only supported in Ruby 1.9 and above)
     # @return [String] The method's comments as a string
@@ -148,7 +148,7 @@ module MethodSource
     def comment
       if respond_to?(:source_location)
         comment = MethodSource.comment_helper(source_location)
-        
+
         raise "Cannot locate source for this method: #{name}" if !comment
       else
         raise "#{self.class}#comment not supported by this Ruby version (#{RUBY_VERSION})"
@@ -171,4 +171,9 @@ end
 
 class Proc
   include MethodSource::MethodExtensions
+
+  if defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /rbx/
+    include MethodSource::SourceLocation::ProcExtensions
+  end
 end
+
