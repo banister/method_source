@@ -2,10 +2,19 @@ direc = File.dirname(__FILE__)
 
 require 'rubygems'
 require 'bacon'
+require 'open4'
 require "#{direc}/../lib/method_source"
 require "#{direc}/test_helper"
 
 describe MethodSource do
+
+  describe "emitted warnings" do
+    it 'should emit no warnings' do
+      Open4.popen4 'ruby -I lib -r"method_source" -W -e "exit"' do |pid,stdin,stdout,stderr|
+        stderr.read.empty?.should == true
+      end
+    end
+  end
 
   describe "source_location (testing 1.8 implementation)" do
     it 'should return correct source_location for a method' do

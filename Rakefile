@@ -20,7 +20,10 @@ def apply_spec_defaults(s)
   s.description = s.summary
   s.require_path = 'lib'
   s.add_dependency("ruby_parser",">=2.0.5")
+  
   s.add_development_dependency("bacon",">=1.1.0")
+  s.add_development_dependency("open4", "~> 1.0.1")
+
   s.homepage = "http://banisterfiend.wordpress.com"
   s.has_rdoc = 'yard'
   s.files = Dir["ext/**/extconf.rb", "ext/**/*.h", "ext/**/*.c", "lib/**/*.rb",
