@@ -29,15 +29,29 @@ module MethodSource
       end
     end
 
-    # Rubinius only
     module ProcExtensions
 
-      # Return the source location for a Proc (Rubinius only)
-      # @return [Array] A two element array. First element is the
-      #   file, second element is the line in the file where the
-      #   proc definition is found.
-      def source_location
-        [block.file.to_s, block.line]
+      if defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /rbx/
+
+        # Return the source location for a Proc (Rubinius only)
+        # @return [Array] A two element array. First element is the
+        #   file, second element is the line in the file where the
+        #   proc definition is found.
+        def source_location
+          [block.file.to_s, block.line]
+        end
+
+      else
+
+        # Return the source location for a Proc (in implementations
+        # without Proc#source_location)
+        # @return [Array] A two element array. First element is the
+        #   file, second element is the line in the file where the
+        #   proc definition is found.
+        def source_location
+          self.to_s =~ /@(.*):(\d+)/
+          [$1, $2.to_i]
+        end
       end
     end
 

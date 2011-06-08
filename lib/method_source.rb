@@ -170,10 +170,7 @@ class UnboundMethod
 end
 
 class Proc
+  include MethodSource::SourceLocation::ProcExtensions
   include MethodSource::MethodExtensions
-
-  if defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /rbx/
-    include MethodSource::SourceLocation::ProcExtensions
-  end
 end
 

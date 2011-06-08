@@ -10,7 +10,7 @@ describe MethodSource do
 
   describe "emitted warnings" do
     it 'should emit no warnings' do
-      Open4.popen4 'ruby -I lib -r"method_source" -W -e "exit"' do |pid,stdin,stdout,stderr|
+      Open4.popen4 'ruby -I lib -rubygems -r"method_source" -W -e "exit"' do |pid,stdin,stdout,stderr|
         stderr.read.empty?.should == true
       end
     end
@@ -80,7 +80,7 @@ describe MethodSource do
     end
   end
 
-  if RUBY_VERSION =~ /1.9/ || is_rbx?
+  # if RUBY_VERSION =~ /1.9/ || is_rbx?
     describe "Lambdas and Procs" do
       it 'should return source for proc' do
         MyProc.source.should == @proc_source
@@ -98,7 +98,7 @@ describe MethodSource do
         MyLambda.comment.should == @lambda_comment
       end
     end
-  end
+  # end
   describe "Comment tests" do
     before do
       @comment1 = "# a\n# b\n"
