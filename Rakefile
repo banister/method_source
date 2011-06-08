@@ -7,7 +7,7 @@ require "#{direc}/lib/method_source/version"
 
 CLOBBER.include("**/*.#{dlext}", "**/*~", "**/*#*", "**/*.log", "**/*.o")
 CLEAN.include("ext/**/*.#{dlext}", "ext/**/*.log", "ext/**/*.o",
-              "ext/**/*~", "ext/**/*#*", "ext/**/*.obj",
+              "ext/**/*~", "ext/**/*#*", "ext/**/*.obj", "**/*.rbc",
               "ext/**/*.def", "ext/**/*.pdb", "**/*_flymake*.*", "**/*_flymake")
 
 def apply_spec_defaults(s)
@@ -20,7 +20,7 @@ def apply_spec_defaults(s)
   s.description = s.summary
   s.require_path = 'lib'
   s.add_dependency("ruby_parser",">=2.0.5")
-  
+
   s.add_development_dependency("bacon",">=1.1.0")
   s.add_development_dependency("open4", "~> 1.0.1")
 
@@ -36,10 +36,10 @@ end
 
 namespace :ruby do
   spec = Gem::Specification.new do |s|
-    apply_spec_defaults(s)        
+    apply_spec_defaults(s)
     s.platform = Gem::Platform::RUBY
   end
-  
+
   Rake::GemPackageTask.new(spec) do |pkg|
     pkg.need_zip = false
     pkg.need_tar = false
