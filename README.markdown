@@ -50,7 +50,6 @@ Example: display method comments
 Limitations:
 ------------
 
-* Proc#source not available in Ruby 1.8
 * Occasional strange behaviour in Ruby 1.8
 * Cannot return source for C methods.
 * Cannot return source for dynamically defined methods.
