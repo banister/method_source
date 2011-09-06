@@ -8,10 +8,12 @@ require "#{direc}/test_helper"
 
 describe MethodSource do
 
-  describe "emitted warnings" do
-    it 'should emit no warnings' do
-      Open4.popen4 'ruby -I lib -rubygems -r"method_source" -W -e "exit"' do |pid,stdin,stdout,stderr|
-        stderr.read.empty?.should == true
+  if !jruby?
+    describe "emitted warnings" do
+      it 'should emit no warnings' do
+        Open4.popen4 'ruby -I lib -rubygems -r"method_source" -W -e "exit"' do |pid,stdin,stdout,stderr|
+          stderr.read.empty?.should == true
+        end
       end
     end
   end
@@ -81,23 +83,23 @@ describe MethodSource do
   end
 
   # if RUBY_VERSION =~ /1.9/ || is_rbx?
-    describe "Lambdas and Procs" do
-      it 'should return source for proc' do
-        MyProc.source.should == @proc_source
-      end
-
-      it 'should return an empty string if there is no comment' do
-        MyProc.comment.should == ''
-      end
-
-      it 'should return source for lambda' do
-        MyLambda.source.should == @lambda_source
-      end
-
-      it 'should return comment for lambda' do
-        MyLambda.comment.should == @lambda_comment
-      end
+  describe "Lambdas and Procs" do
+    it 'should return source for proc' do
+      MyProc.source.should == @proc_source
     end
+
+    it 'should return an empty string if there is no comment' do
+      MyProc.comment.should == ''
+    end
+
+    it 'should return source for lambda' do
+      MyLambda.source.should == @lambda_source
+    end
+
+    it 'should return comment for lambda' do
+      MyLambda.comment.should == @lambda_comment
+    end
+  end
   # end
   describe "Comment tests" do
     before do

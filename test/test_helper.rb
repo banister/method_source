@@ -2,6 +2,11 @@ def is_rbx?
   defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /rbx/
 end
 
+def jruby?
+  defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
+end
+
+
 module M
   def hello; :hello_module; end
 end
