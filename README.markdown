@@ -15,7 +15,8 @@ Method comments can also be extracted using the `comment` method.
 
 It is written in pure Ruby (no C).
 
-* Some Ruby 1.8 support now available. 
+* Some Ruby 1.8 support now available.
+* Support for MRI, RBX, JRuby.
 
 `method_source` provides the `source` and `comment` methods to the `Method` and
 `UnboundMethod` and `Proc` classes.
@@ -60,3 +61,29 @@ Special Thanks
 [Adam Sanderson](https://github.com/adamsanderson) for `comment` functionality.
 
 [Dmitry Elastic](https://github.com/dmitryelastic) for the brilliant Ruby 1.8 `source_location` hack.
+
+License
+-------
+
+(The MIT License)
+
+Copyright (c) 2011 John Mair (banisterfiend)
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
