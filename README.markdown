@@ -62,6 +62,8 @@ Special Thanks
 
 [Dmitry Elastic](https://github.com/dmitryelastic) for the brilliant Ruby 1.8 `source_location` hack.
 
+[Samuel Kadolph](https://github.com/samuelkadolph) for the JRuby 1.8 `source_location`.
+
 License
 -------
 
