@@ -16,7 +16,7 @@ Method comments can also be extracted using the `comment` method.
 It is written in pure Ruby (no C).
 
 * Some Ruby 1.8 support now available.
-* Support for MRI, RBX, JRuby.
+* Support for MRI, RBX, JRuby, REE
 
 `method_source` provides the `source` and `comment` methods to the `Method` and
 `UnboundMethod` and `Proc` classes.
