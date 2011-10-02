@@ -2,7 +2,6 @@ direc = File.dirname(__FILE__)
 
 require 'rubygems'
 require 'bacon'
-require 'open4'
 require "#{direc}/../lib/method_source"
 require "#{direc}/test_helper"
 

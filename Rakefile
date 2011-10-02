@@ -25,8 +25,6 @@ def apply_spec_defaults(s)
   s.add_development_dependency("rake", "~>0.9")
   s.homepage = "http://banisterfiend.wordpress.com"
   s.has_rdoc = 'yard'
-  # s.files = Dir["ext/**/extconf.rb", "ext/**/*.h", "ext/**/*.c", "lib/**/*.rb",
-  #               "test/*.rb", "CHANGELOG", "README.markdown", "Rakefile", ".gemtest"]
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- test/*`.split("\n")
 end
