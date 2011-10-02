@@ -19,10 +19,9 @@ def apply_spec_defaults(s)
   s.email = 'jrmair@gmail.com'
   s.description = s.summary
   s.require_path = 'lib'
-  s.add_dependency("ruby_parser",">=2.0.5")
+  s.add_dependency("ruby_parser","~>2.0.5")
 
-  s.add_development_dependency("bacon",">=1.1.0")
-  s.add_development_dependency("open4", "~> 1.0.1")
+  s.add_development_dependency("bacon","~>1.1.0")
 
   s.homepage = "http://banisterfiend.wordpress.com"
   s.has_rdoc = 'yard'
@@ -33,6 +32,9 @@ end
 task :test do
   sh "bacon -k #{direc}/test/test.rb"
 end
+
+desc "Set up and run tests"
+task :default => [:test]
 
 namespace :ruby do
   spec = Gem::Specification.new do |s|
