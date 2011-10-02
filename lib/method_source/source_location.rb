@@ -1,7 +1,18 @@
 module MethodSource
+  module ReeSourceLocation
+    # Ruby enterprise edition provides all the information that's
+    # needed, in a slightly different way.
+    def source_location
+      [__file__, __line__] rescue nil
+    end
+  end
+
   module SourceLocation
     module MethodExtensions
-      if defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
+      if Proc.method_defined? :__file__
+        include ReeSourceLocation
+
+      elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
         require 'java'
 
         # JRuby version source_location hack
@@ -41,8 +52,10 @@ module MethodSource
     end
 
     module ProcExtensions
+      if Proc.method_defined? :__file__
+        include ReeSourceLocation
 
-      if defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /rbx/
+      elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /rbx/
 
         # Return the source location for a Proc (Rubinius only)
         # @return [Array] A two element array. First element is the
@@ -51,7 +64,6 @@ module MethodSource
         def source_location
           [block.file.to_s, block.line]
         end
-
       else
 
         # Return the source location for a Proc (in implementations
@@ -67,7 +79,10 @@ module MethodSource
     end
 
     module UnboundMethodExtensions
-      if defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
+      if Proc.method_defined? :__file__
+        include ReeSourceLocation
+
+      elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
         require 'java'
 
         # JRuby version source_location hack
@@ -75,6 +90,7 @@ module MethodSource
         def source_location
           to_java.source_location(Thread.current.to_java.getContext())
         end
+
       else
 
 
