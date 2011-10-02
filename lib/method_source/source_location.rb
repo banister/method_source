@@ -9,7 +9,7 @@ module MethodSource
 
   module SourceLocation
     module MethodExtensions
-      if Proc.new {}.respond_to? :__file__
+      if Proc.method_defined? :__file__
         include ReeSourceLocation
 
       elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
@@ -52,7 +52,7 @@ module MethodSource
     end
 
     module ProcExtensions
-      if Proc.new {}.respond_to? :__file__
+      if Proc.method_defined? :__file__
         include ReeSourceLocation
 
       elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /rbx/
@@ -79,7 +79,7 @@ module MethodSource
     end
 
     module UnboundMethodExtensions
-      if Proc.new {}.respond_to? :__file__
+      if Proc.method_defined? :__file__
         include ReeSourceLocation
 
       elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
