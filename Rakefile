@@ -22,15 +22,17 @@ def apply_spec_defaults(s)
   s.add_dependency("ruby_parser","~>2.0.5")
 
   s.add_development_dependency("bacon","~>1.1.0")
-
+  s.add_development_dependency("rake", "~>0.9")
   s.homepage = "http://banisterfiend.wordpress.com"
   s.has_rdoc = 'yard'
-  s.files = Dir["ext/**/extconf.rb", "ext/**/*.h", "ext/**/*.c", "lib/**/*.rb",
-                     "test/*.rb", "CHANGELOG", "README.markdown", "Rakefile", ".gemtest"]
+  # s.files = Dir["ext/**/extconf.rb", "ext/**/*.h", "ext/**/*.c", "lib/**/*.rb",
+  #               "test/*.rb", "CHANGELOG", "README.markdown", "Rakefile", ".gemtest"]
+  s.files = `git ls-files`.split("\n")
+  s.test_files = `git ls-files -- test/*`.split("\n")
 end
 
 task :test do
-  sh "bacon -k #{direc}/test/test.rb"
+  sh "bacon -q #{direc}/test/test.rb"
 end
 
 desc "Set up and run tests"
@@ -45,6 +47,13 @@ namespace :ruby do
   Rake::GemPackageTask.new(spec) do |pkg|
     pkg.need_zip = false
     pkg.need_tar = false
+  end
+
+  desc  "Generate gemspec file"
+  task :gemspec do
+    File.open("#{spec.name}.gemspec", "w") do |f|
+      f << spec.to_ruby
+    end
   end
 end
 
