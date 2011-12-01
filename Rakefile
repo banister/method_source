@@ -19,7 +19,6 @@ def apply_spec_defaults(s)
   s.email = 'jrmair@gmail.com'
   s.description = s.summary
   s.require_path = 'lib'
-  s.add_dependency("ruby_parser",">= 2.3.1")
 
   s.add_development_dependency("bacon","~>1.1.0")
   s.add_development_dependency("rake", "~>0.9")

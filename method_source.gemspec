@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mair (banisterfiend)"]
-  s.date = "2011-10-26"
+  s.date = "2011-11-30"
   s.description = "retrieve the sourcecode for a method"
   s.email = "jrmair@gmail.com"
   s.files = [".gemtest", ".travis.yml", ".yardopts", "Gemfile", "LICENSE", "README.markdown", "Rakefile", "lib/method_source.rb", "lib/method_source/source_location.rb", "lib/method_source/version.rb", "method_source.gemspec", "test/test.rb", "test/test_helper.rb"]
@@ -20,16 +20,13 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<ruby_parser>, [">= 2.3.1"])
       s.add_development_dependency(%q<bacon>, ["~> 1.1.0"])
       s.add_development_dependency(%q<rake>, ["~> 0.9"])
     else
-      s.add_dependency(%q<ruby_parser>, [">= 2.3.1"])
       s.add_dependency(%q<bacon>, ["~> 1.1.0"])
       s.add_dependency(%q<rake>, ["~> 0.9"])
     end
   else
-    s.add_dependency(%q<ruby_parser>, [">= 2.3.1"])
     s.add_dependency(%q<bacon>, ["~> 1.1.0"])
     s.add_dependency(%q<rake>, ["~> 0.9"])
   end

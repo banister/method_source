@@ -7,38 +7,25 @@ require "#{direc}/method_source/version"
 require "#{direc}/method_source/source_location"
 
 module MethodSource
-
-  if RUBY_VERSION =~ /1.9/ && RUBY_ENGINE == "ruby"
-    require 'ripper'
-
-    # Determine if a string of code is a valid Ruby expression.
-    # Ruby 1.9 uses Ripper, Ruby 1.8 uses RubyParser.
-    # @param [String] code The code to validate.
-    # @return [Boolean] Whether or not the code is a valid Ruby expression.
-    # @example
-    #   valid_expression?("class Hello") #=> false
-    #   valid_expression?("class Hello; end") #=> true
-    def self.valid_expression?(code)
-      !!Ripper::SexpBuilder.new(code).parse
-    end
-
-  else
-    require 'ruby_parser'
-
-    # Determine if a string of code is a valid Ruby expression.
-    # Ruby 1.9 uses Ripper, Ruby 1.8 uses RubyParser.
-    # @param [String] code The code to validate.
-    # @return [Boolean] Whether or not the code is a valid Ruby expression.
-    # @example
-    #   valid_expression?("class Hello") #=> false
-    #   valid_expression?("class Hello; end") #=> true
-    def self.valid_expression?(code)
-      RubyParser.new.parse(code)
-    rescue Racc::ParseError, SyntaxError
-      false
+  # Determine if a string of code is a valid Ruby expression.
+  # @param [String] code The code to validate.
+  # @return [Boolean] Whether or not the code is a valid Ruby expression.
+  # @example
+  #   valid_expression?("class Hello") #=> false
+  #   valid_expression?("class Hello; end") #=> true
+  def self.valid_expression?(str)
+    if defined?(Rubinius::Melbourne19) && RUBY_VERSION =~ /^1\.9/
+      Rubinius::Melbourne19.parse_string(str)
+    elsif defined?(Rubinius::Melbourne)
+      Rubinius::Melbourne.parse_string(str)
     else
-      true
+      catch(:valid) {
+        eval("BEGIN{throw :valid}\n#{str}")
+      }
     end
+    true
+  rescue SyntaxError
+    false
   end
 
   # Helper method responsible for extracting method body.
