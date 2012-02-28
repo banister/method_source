@@ -32,6 +32,12 @@ task :test do
   sh "bacon -q #{direc}/test/test.rb"
 end
 
+desc "reinstall gem"
+task :reinstall => :gems do
+  sh "gem uninstall method_source" rescue nil
+  sh "gem install #{direc}/pkg/method_source-#{MethodSource::VERSION}.gem"
+end
+
 desc "Set up and run tests"
 task :default => [:test]
 
