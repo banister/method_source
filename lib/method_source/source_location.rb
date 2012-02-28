@@ -122,14 +122,14 @@ module MethodSource
           end
 
           begin
-            klass.allocate.method(name).source_location
+            Object.instance_method(:method).bind(klass.allocate).call(name).source_location
           rescue TypeError
 
             # Assume we are dealing with a Singleton Class:
             # 1. Get the instance object
             # 2. Forward the source_location lookup to the instance
             instance ||= ObjectSpace.each_object(owner).first
-            instance.method(name).source_location
+            Object.instance_method(:method).bind(instance).call(name).source_location
           end
         end
       end
