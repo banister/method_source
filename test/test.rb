@@ -27,6 +27,9 @@ describe MethodSource do
 
   before do
     @hello_module_source = "  def hello; :hello_module; end\n"
+    @hi_evaled_source = "eval <<-METHOD, binding, __FILE__, __LINE__ + 1\n  def hi\n    @var = \#{name}\n  end\nMETHOD\n"
+    @hello_class_evaled_source = "M.class_eval <<-METHOD, __FILE__, __LINE__ + 1\n  def hello_\#{name}(*args)\n    send_mesg(:\#{name}, *args)\n  end\nMETHOD\n"
+    @hi_module_evaled_source = "M.module_eval <<-METHOD, __FILE__, __LINE__ + 1\n\n  # module_eval is used here\n  #\n  def hi_\#{name}\n    @var = \#{name}\n  end\nMETHOD\n"
     @hello_singleton_source = "def $o.hello; :hello_singleton; end\n"
     @hello_source = "def hello; :hello; end\n"
     @hello_comment = "# A comment for hello\n# It spans two lines and is indented by 2 spaces\n"
@@ -50,6 +53,15 @@ describe MethodSource do
       M.instance_method(:hello).source.should == @hello_module_source
     end
 
+    it 'should return source for an evaled method' do
+      method(:hi).source.should == @hi_evaled_source
+    end
+
+    it 'should return source for a class_evaled method' do
+      M.instance_method(:hello_prymaster).source.should == @hello_class_evaled_source
+      M.instance_method(:hi_prymaster).source.should == @hi_module_evaled_source
+    end
+
     it 'should return source for a singleton method as an instance method' do
       class << $o; self; end.instance_method(:hello).source.should == @hello_singleton_source
     end
@@ -57,7 +69,6 @@ describe MethodSource do
     it 'should return source for a singleton method' do
       $o.method(:hello).source.should == @hello_singleton_source
     end
-
 
     it 'should return a comment for method' do
       method(:hello).comment.should == @hello_comment

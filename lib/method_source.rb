@@ -47,6 +47,23 @@ module MethodSource
         return code if valid_expression?(code)
       end
     end
+  rescue EOFError => e
+
+    # reattempt to scan for method, but this time, start at line
+    # containing *_eval
+    eval_regex = /^(?:(?!#).)*(eval|module_eval|class_eval|instance_eval)[\s|\(].*$/
+
+    host_file_lines = File.readlines(file_name)
+    search_lines = host_file_lines[0..line - 2]
+    idx = search_lines.rindex { |v| eval_regex =~ v }
+
+    code = ""
+    host_file_lines[idx..-1].each do |val|
+      code << val
+      return code if valid_expression?(code)
+    end
+
+    raise "Problem displaying method body defined at #{file_name}:#{line}"
   end
 
   # Helper method responsible for opening source file and buffering up

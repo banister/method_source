@@ -11,6 +11,31 @@ module M
   def hello; :hello_module; end
 end
 
+name = "prymaster"
+
+eval <<-METHOD, binding, __FILE__, __LINE__ + 1
+  def hi
+    @var = #{name}
+  end
+METHOD
+
+M.class_eval <<-METHOD, __FILE__, __LINE__ + 1
+  def hello_#{name}(*args)
+    send_mesg(:#{name}, *args)
+  end
+METHOD
+
+# module_eval to DRY code up
+#
+M.module_eval <<-METHOD, __FILE__, __LINE__ + 1
+
+  # module_eval is used here
+  #
+  def hi_#{name}
+    @var = #{name}
+  end
+METHOD
+
 $o = Object.new
 def $o.hello; :hello_singleton; end
 
