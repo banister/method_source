@@ -33,6 +33,10 @@ describe MethodSource do
     @lambda_comment = "# This is a comment for MyLambda\n"
     @lambda_source = "MyLambda = lambda { :lambda }\n"
     @proc_source = "MyProc = Proc.new { :proc }\n"
+    @hello_instance_evaled_source = "  def hello_\#{name}(*args)\n    send_mesg(:\#{name}, *args)\n  end\n"
+    @hello_instance_evaled_source_2 = "  def \#{name}_two()\n    if 44\n      45\n    end\n  end\n"
+    @hello_class_evaled_source = "  def hello_\#{name}(*args)\n    send_mesg(:\#{name}, *args)\n  end\n"
+    @hi_module_evaled_source = "  def hi_\#{name}\n    @var = \#{name}\n  end\n"
   end
 
   it 'should define methods on Method and UnboundMethod and Proc' do
@@ -58,11 +62,20 @@ describe MethodSource do
       $o.method(:hello).source.should == @hello_singleton_source
     end
 
-
     it 'should return a comment for method' do
       method(:hello).comment.should == @hello_comment
     end
 
+    it 'should return source for an *_evaled method' do
+      M.method(:hello_name).source.should == @hello_instance_evaled_source
+      M.method(:name_two).source.should == @hello_instance_evaled_source_2
+      M.instance_method(:hello_name).source.should == @hello_class_evaled_source
+      M.instance_method(:hi_name).source.should == @hi_module_evaled_source
+    end
+
+    it "should raise error for evaled methods that do not pass __FILE__ and __LINE__ + 1 as its arguments" do
+      lambda { M.instance_method(:name_three).source }.should.raise RuntimeError
+    end
 
     if !is_rbx?
       it 'should raise for C methods' do
