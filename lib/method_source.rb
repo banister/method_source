@@ -31,22 +31,61 @@ module MethodSource
   # Helper method responsible for extracting method body.
   # Defined here to avoid polluting `Method` class.
   # @param [Array] source_location The array returned by Method#source_location
-  # @return [File] The opened source file
+  # @return [String] The method body
   def self.source_helper(source_location)
     return nil if !source_location.is_a?(Array)
 
-    file_name, line = source_location
-    File.open(file_name) do |file|
-      (line - 1).times { file.readline }
+    # 1st try: simple eval
+    code = extract_code(source_location)
 
-      code = ""
-      loop do
-        val = file.readline
-        code << val
+    if !code
+      # 2nd try: attempt to re-scan method body, this time, starting at line containing *_eval
+      #
+      # A temporary work around for cases where method body is defined inside a
+      # string (i.e. class_evaled methods), and the resulting valid_expression
+      # doesn't return true due to string not being interpolated.
+      # (see https://github.com/banister/method_source/issues/13)
+      #
+      file_name = source_location[0]
+      line = get_line_containing_eval(source_location)
+      eval_code = extract_code([file_name, line]) if line
 
-        return code if valid_expression?(code)
+      # if our method body is inside eval string
+      if eval_code.lines.include? lines_for_file(file_name)[source_location[1]]
+        # extract method body, this time, replace all occurences
+        # of #{} (which causes syntax errors in our case) with a placeholder
+        method_body = extract_code(source_location) { |code| code.gsub(/\#{.*?}/,"placeholder") }
+        code = method_body ? method_body : eval_code
       end
     end
+
+    code
+  end
+
+  # Retrives line number where class_eval|instance_eval|module_eval is called given a method's source location
+  #
+  # @param [Array] source_location The array returned by Method#source_location
+  # @return [Fixnum] line number where *_eval was called.
+  def self.get_line_containing_eval(source_location)
+    file_name, line = source_location
+    eval_regex = /^(?:(?!#).)*(module|class|instance)_eval[\s(].*$/
+    idx = lines_for_file(file_name)[0..(line - 2)].rindex { |v| v =~ eval_regex }
+    idx ? idx + 1 : nil
+  end
+
+  # @param [Array] source_location The array containing file_name [String], line [Fixnum]
+  # @param [Block] An optional block that can be passed that will be used to modify
+  #                the code buffer before its syntax is evaluated
+  # @return [String] The method body
+  def self.extract_code(source_location)
+    file_name, line = source_location
+    code = ""
+    lines_for_file(file_name)[(line - 1)..-1].each do |line|
+      code << line
+      expression = block_given? ? yield(code) : code
+      return code if valid_expression?(expression)
+    end
+    nil
   end
 
   # Helper method responsible for opening source file and buffering up
@@ -73,6 +112,11 @@ module MethodSource
 
       buffer
     end
+  end
+
+  def self.lines_for_file(file_name)
+    @lines_for_file ||= {}
+    @lines_for_file[file_name] ||= File.readlines(file_name)
   end
 
   # This module is to be included by `Method` and `UnboundMethod` and
