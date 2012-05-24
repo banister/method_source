@@ -31,22 +31,48 @@ module MethodSource
   # Helper method responsible for extracting method body.
   # Defined here to avoid polluting `Method` class.
   # @param [Array] source_location The array returned by Method#source_location
-  # @return [File] The opened source file
+  # @return [String] The method body
   def self.source_helper(source_location)
     return nil if !source_location.is_a?(Array)
 
-    file_name, line = source_location
-    File.open(file_name) do |file|
-      (line - 1).times { file.readline }
+    # 1st try: simple eval
+    code = extract_code(source_location)
 
-      code = ""
-      loop do
-        val = file.readline
-        code << val
-
-        return code if valid_expression?(code)
-      end
+    unless code
+      # 2nd try: attempt to re-scan method body, this time, assume we're inside an eval string simulate interpolation of #{} expressions by replacing it with placeholder
+      #
+      # A temporary work around for cases where method body is defined inside a
+      # string (i.e. class_evaled methods), and the resulting valid_expression
+      # doesn't return true due to string not being interpolated.
+      # (see https://github.com/banister/method_source/issues/13)
+      #
+      code = extract_code(source_location) { |code| code.gsub(/\#{.*?}/,"temp") }
     end
+
+    code
+  rescue Errno::ENOENT
+    # source_location[0] of evaled methods would return (eval) if __FILE__ and __LINE__ is not given. File.readlines "(eval)" would raise ENOENT
+    nil
+  end
+
+  # @param [Array] source_location The array containing file_name [String], line [Fixnum]
+  # @param [Block] An optional block that can be passed that will be used to modify
+  #                the code buffer before its syntax is evaluated
+  # @return [String] The method body
+  def self.extract_code(source_location)
+    file_name, line = source_location
+    code = ""
+    lines_for_file(file_name)[(line - 1)..-1].each do |line|
+      code << line
+      expression = block_given? ? yield(code) : code
+      return code if valid_expression?(expression)
+    end
+    nil
+  end
+
+  def self.lines_for_file(file_name)
+    @lines_for_file ||= {}
+    @lines_for_file[file_name] ||= File.readlines(file_name)
   end
 
   # Helper method responsible for opening source file and buffering up
