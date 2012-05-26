@@ -46,7 +46,7 @@ module MethodSource
       # doesn't return true due to string not being interpolated.
       # (see https://github.com/banister/method_source/issues/13)
       #
-      code = extract_code(source_location) { |code| code.gsub(/\#{.*?}/,"temp") }
+      code = extract_code(source_location) { |code| code.gsub(/\#\{.*?\}/,"temp") }
     end
 
     code
