@@ -77,12 +77,12 @@ describe MethodSource do
     end
 
     it "should raise error for evaled methods that do not pass __FILE__ and __LINE__ + 1 as its arguments" do
-      lambda { M.instance_method(:name_three).source }.should.raise RuntimeError
+      lambda { M.instance_method(:name_three).source }.should.raise MethodSource::SourceNotFoundError
     end
 
     if !is_rbx?
       it 'should raise for C methods' do
-        lambda { method(:puts).source }.should.raise RuntimeError
+        lambda { method(:puts).source }.should.raise MethodSource::SourceNotFoundError
       end
     end
   end
