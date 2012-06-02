@@ -7,6 +7,9 @@ require "#{direc}/method_source/version"
 require "#{direc}/method_source/source_location"
 
 module MethodSource
+
+  class SourceNotFoundError < StandardError; end
+
   # Determine if a string of code is a valid Ruby expression.
   # @param [String] code The code to validate.
   # @return [Boolean] Whether or not the code is a valid Ruby expression.
@@ -51,8 +54,7 @@ module MethodSource
 
     code
   rescue Errno::ENOENT
-    # source_location[0] of evaled methods would return (eval) if __FILE__ and __LINE__ is not given. File.readlines "(eval)" would raise ENOENT
-    nil
+    raise SourceNotFoundError, "Cannot get source code located at file: #{source_location[0]}"
   end
 
   # @param [Array] source_location The array containing file_name [String], line [Fixnum]
@@ -143,9 +145,9 @@ module MethodSource
       if respond_to?(:source_location)
         source = MethodSource.source_helper(source_location)
 
-        raise "Cannot locate source for this method: #{name}" if !source
+        raise SourceNotFoundError, "Cannot locate source for this method: #{name}" if !source
       else
-        raise "#{self.class}#source not supported by this Ruby version (#{RUBY_VERSION})"
+        raise SourceNotFoundError, "#{self.class}#source not supported by this Ruby version (#{RUBY_VERSION})"
       end
 
       source
@@ -162,9 +164,9 @@ module MethodSource
       if respond_to?(:source_location)
         comment = MethodSource.comment_helper(source_location)
 
-        raise "Cannot locate source for this method: #{name}" if !comment
+        raise SourceNotFoundError, "Cannot locate source for this method: #{name}" if !comment
       else
-        raise "#{self.class}#comment not supported by this Ruby version (#{RUBY_VERSION})"
+        raise SourceNotFoundError, "#{self.class}#comment not supported by this Ruby version (#{RUBY_VERSION})"
       end
 
       comment
