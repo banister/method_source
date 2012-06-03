@@ -46,7 +46,7 @@ module MethodSource
             set_trace_func nil
             @file = File.expand_path(@file) if @file && File.exist?(File.expand_path(@file))
           end
-          return [@file, @line] if File.exist?(@file.to_s)
+          [@file, @line] if @file
         end
       end
     end
