@@ -18,23 +18,25 @@ module MethodSource
   # Helper method responsible for extracting method body.
   # Defined here to avoid polluting `Method` class.
   # @param [Array] source_location The array returned by Method#source_location
+  # @param [String]  method_name
   # @return [String] The method body
-  def self.source_helper(source_location)
-    raise SourceNotFoundError, "Source location not found" unless source_location
+  def self.source_helper(source_location, name=nil)
+    raise SourceNotFoundError, "Could not locate source for #{name}!" unless source_location
     file, line = *source_location
 
     expression_at(lines_for(file), line)
   rescue SyntaxError => e
-    raise SourceNotFoundError, e.message
+    raise SourceNotFoundError, "Could not parse source for #{name}: #{e.message}"
   end
 
   # Helper method responsible for opening source file and buffering up
   # the comments for a specified method. Defined here to avoid polluting
   # `Method` class.
   # @param [Array] source_location The array returned by Method#source_location
+  # @param [String]  method_name
   # @return [String] The comments up to the point of the method.
-  def self.comment_helper(source_location)
-    raise SourceNotFoundError, "Source location not found" unless source_location
+  def self.comment_helper(source_location, name=nil)
+    raise SourceNotFoundError, "Could not locate source for #{name}!" unless source_location
     file, line = *source_location
 
     comment_describing(lines_for(file), line)
@@ -43,13 +45,14 @@ module MethodSource
   # Load a memoized copy of the lines in a file.
   #
   # @param [String]  file_name
+  # @param [String]  method_name
   # @return [Array<String>]  the contents of the file
   # @raise [SourceNotFoundError]
-  def self.lines_for(file_name)
+  def self.lines_for(file_name, name=nil)
     @lines_for_file ||= {}
     @lines_for_file[file_name] ||= File.readlines(file_name)
   rescue Errno::ENOENT => e
-    raise SourceNotFoundError, e.message
+    raise SourceNotFoundError, "Could not load source for #{name}: #{e.message}"
   end
 
   # @deprecated — use MethodSource::CodeHelpers#complete_expression?
@@ -104,7 +107,7 @@ module MethodSource
     #       self
     #     end
     def source
-      MethodSource.source_helper(source_location)
+      MethodSource.source_helper(source_location, name)
     end
 
     # Return the comments associated with the method as a string.
@@ -116,7 +119,7 @@ module MethodSource
     #  =>
     #     # Removes all elements and returns self.
     def comment
-      MethodSource.comment_helper(source_location)
+      MethodSource.comment_helper(source_location, name)
     end
   end
 end
