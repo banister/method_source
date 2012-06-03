@@ -5,102 +5,66 @@ direc = File.dirname(__FILE__)
 
 require "#{direc}/method_source/version"
 require "#{direc}/method_source/source_location"
+require "#{direc}/method_source/code_helpers"
 
 module MethodSource
+  extend MethodSource::CodeHelpers
 
+  # An Exception to mark errors that were raised trying to find the source from
+  # a given source_location.
+  #
   class SourceNotFoundError < StandardError; end
-
-  # Determine if a string of code is a valid Ruby expression.
-  # @param [String] code The code to validate.
-  # @return [Boolean] Whether or not the code is a valid Ruby expression.
-  # @example
-  #   valid_expression?("class Hello") #=> false
-  #   valid_expression?("class Hello; end") #=> true
-  def self.valid_expression?(str)
-    if defined?(Rubinius::Melbourne19) && RUBY_VERSION =~ /^1\.9/
-      Rubinius::Melbourne19.parse_string(str)
-    elsif defined?(Rubinius::Melbourne)
-      Rubinius::Melbourne.parse_string(str)
-    else
-      catch(:valid) {
-        eval("BEGIN{throw :valid}\n#{str}")
-      }
-    end
-    true
-  rescue SyntaxError
-    false
-  end
 
   # Helper method responsible for extracting method body.
   # Defined here to avoid polluting `Method` class.
   # @param [Array] source_location The array returned by Method#source_location
+  # @param [String]  method_name
   # @return [String] The method body
-  def self.source_helper(source_location)
-    return nil if !source_location.is_a?(Array)
+  def self.source_helper(source_location, name=nil)
+    raise SourceNotFoundError, "Could not locate source for #{name}!" unless source_location
+    file, line = *source_location
 
-    # 1st try: simple eval
-    code = extract_code(source_location)
-
-    unless code
-      # 2nd try: attempt to re-scan method body, this time, assume we're inside an eval string simulate interpolation of #{} expressions by replacing it with placeholder
-      #
-      # A temporary work around for cases where method body is defined inside a
-      # string (i.e. class_evaled methods), and the resulting valid_expression
-      # doesn't return true due to string not being interpolated.
-      # (see https://github.com/banister/method_source/issues/13)
-      #
-      code = extract_code(source_location) { |code| code.gsub(/\#\{.*?\}/,"temp") }
-    end
-
-    code
-  rescue Errno::ENOENT
-    raise SourceNotFoundError, "Cannot get source code located at file: #{source_location[0]}"
-  end
-
-  # @param [Array] source_location The array containing file_name [String], line [Fixnum]
-  # @param [Block] An optional block that can be passed that will be used to modify
-  #                the code buffer before its syntax is evaluated
-  # @return [String] The method body
-  def self.extract_code(source_location)
-    file_name, line = source_location
-    code = ""
-    lines_for_file(file_name)[(line - 1)..-1].each do |line|
-      code << line
-      expression = block_given? ? yield(code) : code
-      return code if valid_expression?(expression)
-    end
-    nil
-  end
-
-  def self.lines_for_file(file_name)
-    @lines_for_file ||= {}
-    @lines_for_file[file_name] ||= File.readlines(file_name)
+    expression_at(lines_for(file), line)
+  rescue SyntaxError => e
+    raise SourceNotFoundError, "Could not parse source for #{name}: #{e.message}"
   end
 
   # Helper method responsible for opening source file and buffering up
   # the comments for a specified method. Defined here to avoid polluting
   # `Method` class.
   # @param [Array] source_location The array returned by Method#source_location
+  # @param [String]  method_name
   # @return [String] The comments up to the point of the method.
-  def self.comment_helper(source_location)
-    return nil if !source_location.is_a?(Array)
+  def self.comment_helper(source_location, name=nil)
+    raise SourceNotFoundError, "Could not locate source for #{name}!" unless source_location
+    file, line = *source_location
 
-    file_name, line = source_location
-    File.open(file_name) do |file|
-      buffer = ""
-      (line - 1).times do
-        line = file.readline
-        # Add any line that is a valid ruby comment,
-        # but clear as soon as we hit a non comment line.
-        if (line =~ /^\s*#/) || (line =~ /^\s*$/)
-          buffer << line.lstrip
-        else
-          buffer.replace("")
-        end
-      end
+    comment_describing(lines_for(file), line)
+  end
 
-      buffer
-    end
+  # Load a memoized copy of the lines in a file.
+  #
+  # @param [String]  file_name
+  # @param [String]  method_name
+  # @return [Array<String>]  the contents of the file
+  # @raise [SourceNotFoundError]
+  def self.lines_for(file_name, name=nil)
+    @lines_for_file ||= {}
+    @lines_for_file[file_name] ||= File.readlines(file_name)
+  rescue Errno::ENOENT => e
+    raise SourceNotFoundError, "Could not load source for #{name}: #{e.message}"
+  end
+
+  # @deprecated — use MethodSource::CodeHelpers#complete_expression?
+  def self.valid_expression?(str)
+    complete_expression?(str)
+  rescue SyntaxError
+    false
+  end
+
+  # @deprecated — use MethodSource::CodeHelpers#expression_at
+  def self.extract_code(source_location)
+    source_helper(source_location)
   end
 
   # This module is to be included by `Method` and `UnboundMethod` and
@@ -132,8 +96,9 @@ module MethodSource
     end
 
     # Return the sourcecode for the method as a string
-    # (This functionality is only supported in Ruby 1.9 and above)
     # @return [String] The method sourcecode as a string
+    # @raise SourceNotFoundException
+    #
     # @example
     #  Set.instance_method(:clear).source.display
     #  =>
@@ -142,34 +107,19 @@ module MethodSource
     #       self
     #     end
     def source
-      if respond_to?(:source_location)
-        source = MethodSource.source_helper(source_location)
-
-        raise SourceNotFoundError, "Cannot locate source for this method: #{name}" if !source
-      else
-        raise SourceNotFoundError, "#{self.class}#source not supported by this Ruby version (#{RUBY_VERSION})"
-      end
-
-      source
+      MethodSource.source_helper(source_location, name)
     end
 
     # Return the comments associated with the method as a string.
-    # (This functionality is only supported in Ruby 1.9 and above)
     # @return [String] The method's comments as a string
+    # @raise SourceNotFoundException
+    #
     # @example
     #  Set.instance_method(:clear).comment.display
     #  =>
     #     # Removes all elements and returns self.
     def comment
-      if respond_to?(:source_location)
-        comment = MethodSource.comment_helper(source_location)
-
-        raise SourceNotFoundError, "Cannot locate source for this method: #{name}" if !comment
-      else
-        raise SourceNotFoundError, "#{self.class}#comment not supported by this Ruby version (#{RUBY_VERSION})"
-      end
-
-      comment
+      MethodSource.comment_helper(source_location, name)
     end
   end
 end
