@@ -107,7 +107,7 @@ module MethodSource
     #       self
     #     end
     def source
-      MethodSource.source_helper(source_location, name)
+      MethodSource.source_helper(source_location, defined?(name) ? name : inspect)
     end
 
     # Return the comments associated with the method as a string.
@@ -119,7 +119,7 @@ module MethodSource
     #  =>
     #     # Removes all elements and returns self.
     def comment
-      MethodSource.comment_helper(source_location, name)
+      MethodSource.comment_helper(source_location, defined?(name) ? name : inspect)
     end
   end
 end
