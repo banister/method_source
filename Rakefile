@@ -41,6 +41,9 @@ end
 desc "Set up and run tests"
 task :default => [:test]
 
+desc "Build the gemspec file"
+task :gemspec => "ruby:gemspec"
+
 namespace :ruby do
   spec = Gem::Specification.new do |s|
     apply_spec_defaults(s)
