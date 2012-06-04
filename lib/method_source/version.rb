@@ -1,3 +1,3 @@
 module MethodSource
-  VERSION = "0.7.1"
+  VERSION = "0.8.pre.1"
 end
