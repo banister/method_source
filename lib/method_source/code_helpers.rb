@@ -79,12 +79,47 @@ module MethodSource
     # @return [String]  a valid ruby expression
     # @raise [SyntaxError]
     def extract_first_expression(lines, &block)
-      code = ""
-      lines.each do |v|
-        code << v
+      each_expression_guess(lines) do |code|
         return code if complete_expression?(block ? block.call(code) : code)
       end
       raise SyntaxError, "unexpected $end"
+    end
+
+    # Guess at which subsets of the entire file might be valid expressions.
+    #
+    # In the simple case this just iterates over all possible substrings that
+    # start on the first line.
+    #
+    # Unfortunately complete_expression? is an O(n) check, and so this quickly
+    # adds up if we're calling it n times. To avoid that in the common case,
+    # we assert that people will indent code correctly and do a fast search for
+    # the first correctly indented end. If that's not right, we fall back to the
+    # simple iteration scheme.
+    #
+    # TODO: we should strongly consider using a real tokenizer here so that we
+    # can get O(n) behaviour more of the time.
+    #
+    # @param [Array<String>]  lines
+    # @yield [String]  a potential ruby expression
+    def each_expression_guess(lines)
+      begin
+        if lines.first =~ /\A([ \t]*)(class|module|def) /
+          indent = $1
+          code = ""
+          lines.each do |v|
+            code << v
+            yield code if v =~ /\A#{indent}end/
+          end
+        end
+      rescue  SyntaxError => e
+        # pass
+      end
+
+      code = ""
+      lines.each do |v|
+        code << v
+        yield code
+      end
     end
 
     # Get the last comment from the input.
