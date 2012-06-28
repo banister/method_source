@@ -13,14 +13,19 @@ module MethodSource
     #                         expressions that may have been valid inside an eval.
     # @return [String]  The first complete expression
     # @raise [SyntaxError]  If the first complete expression can't be identified
-    def expression_at(file, line_number, strict=false)
+    def expression_at(file, line_number, options={})
+      options = {
+        :strict  => false,
+        :consume => 0
+      }.merge!(options)
+
       lines = file.is_a?(Array) ? file : file.each_line.to_a
 
       relevant_lines = lines[(line_number - 1)..-1] || []
 
-      extract_first_expression(relevant_lines)
+      extract_first_expression(relevant_lines, options[:consume])
     rescue SyntaxError => e
-      raise if strict
+      raise if options[:strict]
 
       begin
         extract_first_expression(relevant_lines) do |code|
@@ -78,8 +83,9 @@ module MethodSource
     # @param [&Block]  a clean-up function to run before checking for complete_expression
     # @return [String]  a valid ruby expression
     # @raise [SyntaxError]
-    def extract_first_expression(lines, &block)
-      code = ""
+    def extract_first_expression(lines, consume=0, &block)
+      code = consume.zero? ? "" : lines.slice!(0..(consume - 1)).join
+
       lines.each do |v|
         code << v
         return code if complete_expression?(block ? block.call(code) : code)
