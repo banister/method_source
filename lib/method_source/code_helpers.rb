@@ -7,10 +7,14 @@ module MethodSource
     #
     # @param [Array<String>, File, String] file  The file to parse, either as a File or as
     # @param [Fixnum]  line_number  The line number at which to look.
-    #                             NOTE: The first line in a file is line 1!
-    # @param [Boolean]  strict  If set to true, then only completely valid expressions are
-    #                         returned. Otherwise heuristics are used to extract
-    #                         expressions that may have been valid inside an eval.
+    #                             NOTE: The first line in a file is
+    #                           line 1!
+    # @param [Hash] options The optional configuration parameters.
+    # @option options [Boolean] :strict  If set to true, then only completely
+    #   valid expressions are returned. Otherwise heuristics are used to extract
+    #   expressions that may have been valid inside an eval.
+    # @option options [Fixnum] :consume  A number of lines to automatically
+    #   consume (add to the expression buffer) without checking for validity.
     # @return [String]  The first complete expression
     # @raise [SyntaxError]  If the first complete expression can't be identified
     def expression_at(file, line_number, options={})
@@ -80,7 +84,9 @@ module MethodSource
     # Get the first expression from the input.
     #
     # @param [Array<String>]  lines
-    # @param [&Block]  a clean-up function to run before checking for complete_expression
+    # @param [Fixnum] consume A number of lines to automatically
+    #   consume (add to the expression buffer) without checking for validity.
+    # @yield a clean-up function to run before checking for complete_expression
     # @return [String]  a valid ruby expression
     # @raise [SyntaxError]
     def extract_first_expression(lines, consume=0, &block)
