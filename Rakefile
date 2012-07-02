@@ -29,7 +29,7 @@ def apply_spec_defaults(s)
 end
 
 task :test do
-  sh "bacon -q #{direc}/test/test.rb"
+  sh "bacon -q #{direc}/test/test.rb #{direc}/test/test_code_helpers.rb"
 end
 
 desc "reinstall gem"

@@ -123,8 +123,10 @@ module MethodSource
     # fixed by adding more input to the buffer.
     module IncompleteExpression
       def self.===(ex)
+        return false unless SyntaxError === ex
         case ex.message
         when /unexpected (\$end|end-of-file|END_OF_FILE)/, # mri, jruby, ironruby
+          /embedded document meets end of file/, # =begin
           /unterminated (quoted string|string|regexp) meets end of file/, # "quoted string" is ironruby
           /missing 'end' for/, /: expecting '[})\]]'$/, /can't find string ".*" anywhere before EOF/, /: expecting keyword_end/, /expecting kWHEN/ # rbx
           true
