@@ -2,19 +2,19 @@
 
 Gem::Specification.new do |s|
   s.name = "method_source"
-  s.version = "0.8.pre.3"
+  s.version = "0.8"
 
-  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mair (banisterfiend)"]
-  s.date = "2012-06-29"
+  s.date = "2012-07-05"
   s.description = "retrieve the sourcecode for a method"
   s.email = "jrmair@gmail.com"
-  s.files = [".gemtest", ".travis.yml", ".yardopts", "Gemfile", "LICENSE", "README.markdown", "Rakefile", "lib/method_source.rb", "lib/method_source/code_helpers.rb", "lib/method_source/source_location.rb", "lib/method_source/version.rb", "method_source.gemspec", "test/test.rb", "test/test_helper.rb"]
+  s.files = [".gemtest", ".travis.yml", ".yardopts", "Gemfile", "LICENSE", "README.markdown", "Rakefile", "lib/method_source.rb", "lib/method_source/code_helpers.rb", "lib/method_source/source_location.rb", "lib/method_source/version.rb", "method_source.gemspec", "test/test.rb", "test/test_code_helpers.rb", "test/test_helper.rb"]
   s.homepage = "http://banisterfiend.wordpress.com"
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.24"
   s.summary = "retrieve the sourcecode for a method"
-  s.test_files = ["test/test.rb", "test/test_helper.rb"]
+  s.test_files = ["test/test.rb", "test/test_code_helpers.rb", "test/test_helper.rb"]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
