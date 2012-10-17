@@ -1,8 +1,8 @@
-dlext = Config::CONFIG['DLEXT']
+dlext = RbConfig::CONFIG['DLEXT']
 direc = File.dirname(__FILE__)
 
 require 'rake/clean'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
 require "#{direc}/lib/method_source/version"
 
 CLOBBER.include("**/*.#{dlext}", "**/*~", "**/*#*", "**/*.log", "**/*.o")
@@ -50,7 +50,7 @@ namespace :ruby do
     s.platform = Gem::Platform::RUBY
   end
 
-  Rake::GemPackageTask.new(spec) do |pkg|
+  Gem::PackageTask.new(spec) do |pkg|
     pkg.need_zip = false
     pkg.need_tar = false
   end
