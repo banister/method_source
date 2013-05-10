@@ -35,7 +35,7 @@ module MethodSource
         extract_first_expression(relevant_lines) do |code|
           code.gsub(/\#\{.*?\}/, "temp")
         end
-      rescue SyntaxError => e2
+      rescue SyntaxError
         raise e
       end
     end
