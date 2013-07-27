@@ -11,7 +11,3 @@ notifications:
   irc: "irc.freenode.org#pry"
   recipients:
     - jrmair@gmail.com
-
-branches:
-  only:
-    - master
