@@ -125,13 +125,13 @@ module MethodSource
       GENERIC_REGEXPS = [
         /unexpected (\$end|end-of-file|end-of-input|END_OF_FILE)/, # mri, jruby, ruby-2.0, ironruby
         /embedded document meets end of file/, # =begin
-        /unterminated (quoted string|string|regexp) meets end of file/ # "quoted string" is ironruby
+        /unterminated (quoted string|string|regexp) meets end of file/, # "quoted string" is ironruby
+        /can't find string ".*" anywhere before EOF/, # rbx and jruby
+        /missing 'end' for/, /expecting kWHEN/ # rbx
       ]
 
-      RBX_REGEXPS = [
-        /missing 'end' for/, /expecting '[})\]]'(?:$|:)/,
-        /can't find string ".*" anywhere before EOF/, /expecting keyword_end/,
-        /expecting kWHEN/
+      RBX_ONLY_REGEXPS = [
+        /expecting '[})\]]'(?:$|:)/, /expecting keyword_end/
       ]
 
       def self.===(ex)
@@ -139,7 +139,7 @@ module MethodSource
         case ex.message
         when *GENERIC_REGEXPS
           true
-        when *RBX_REGEXPS
+        when *RBX_ONLY_REGEXPS
           rbx?
         else
           false
