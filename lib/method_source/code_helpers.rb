@@ -122,17 +122,32 @@ module MethodSource
     # An exception matcher that matches only subsets of SyntaxErrors that can be
     # fixed by adding more input to the buffer.
     module IncompleteExpression
+      GENERIC_REGEXPS = [
+        /unexpected (\$end|end-of-file|end-of-input|END_OF_FILE)/, # mri, jruby, ruby-2.0, ironruby
+        /embedded document meets end of file/, # =begin
+        /unterminated (quoted string|string|regexp) meets end of file/ # "quoted string" is ironruby
+      ]
+
+      RBX_REGEXPS = [
+        /missing 'end' for/, /expecting '[})\]]'(?:$|:)/,
+        /can't find string ".*" anywhere before EOF/, /expecting keyword_end/,
+        /expecting kWHEN/
+      ]
+
       def self.===(ex)
         return false unless SyntaxError === ex
         case ex.message
-        when /unexpected (\$end|end-of-file|end-of-input|END_OF_FILE)/, # mri, jruby, ruby-2.0, ironruby
-          /embedded document meets end of file/, # =begin
-          /unterminated (quoted string|string|regexp) meets end of file/, # "quoted string" is ironruby
-          /missing 'end' for/, /: expecting '[})\]]'$/, /can't find string ".*" anywhere before EOF/, /: expecting keyword_end/, /expecting kWHEN/ # rbx
+        when *GENERIC_REGEXPS
           true
+        when *RBX_REGEXPS
+          rbx?
         else
           false
         end
+      end
+
+      def self.rbx?
+        RbConfig::CONFIG['ruby_install_name'] == 'rbx'
       end
     end
   end
