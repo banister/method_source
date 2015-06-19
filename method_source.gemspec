@@ -22,6 +22,16 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<bacon>, ["~> 1.1.0"])
       s.add_development_dependency(%q<rake>, ["~> 0.9"])
+      # Under some versions of Rubinius, when the tests are run with
+      # `bundle exec rake`, the irb tests failes with:
+      #     rubysl-irb is not part of the bundle. Add it to Gemfile.
+      # This seems to be a bug in some version of Rubinius:
+      #     https://gitter.im/rubinius/rubinius/archives/2015/04/14
+      # Since this is only a development dependency, we can get away
+      # with the the condition.
+      if Object.const_defined?("RUBY_ENGINE") && RUBY_ENGINE == 'rbx'
+        s.add_development_dependency(%q<rubysl-irb>)
+      end
     else
       s.add_dependency(%q<bacon>, ["~> 1.1.0"])
       s.add_dependency(%q<rake>, ["~> 0.9"])
