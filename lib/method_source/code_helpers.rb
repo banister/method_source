@@ -71,8 +71,8 @@ module MethodSource
         eval("BEGIN{throw :valid}\n#{str}")
       end
 
-      # Assert that a line which ends with a , or \ is incomplete.
-      str !~ /[,\\]\s*\z/
+      # Assert that a line which ends with a , or \ but not with $\ is incomplete.
+      str !~ /(,|[^\$]\\)\s*\z/
     rescue IncompleteExpression
       false
     ensure

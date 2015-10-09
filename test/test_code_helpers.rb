@@ -38,4 +38,8 @@ describe MethodSource::CodeHelpers do
       }.should.raise(SyntaxError)
     end
   end
+
+  it "should consider as complete lines ending with $\\" do
+    @tester.complete_expression?('$\\').should == true
+  end
 end
