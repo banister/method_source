@@ -72,7 +72,7 @@ module MethodSource
       end
 
       # Assert that a line which ends with a , or \ but not with $\ is incomplete.
-      str !~ /(,|[^\$]\\)\s*\z/
+      str !~ /(?:,|[^\$]\\)\s*\z/
     rescue IncompleteExpression
       false
     ensure
