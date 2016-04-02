@@ -24,6 +24,16 @@ describe MethodSource::CodeHelpers do
   end
 
   [
+    '%\a\\',
+    '%\abc\\',
+    '%\\\\',
+  ].each do |line|
+    it "should not complain on backslashed strings: #{line}" do
+      @tester.complete_expression?(line).should == true
+    end
+  end
+
+  [
     ["end"],
     ["puts )("],
     ["1 1"],
