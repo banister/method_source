@@ -111,7 +111,7 @@ module MethodSource
           case
           when klass == Symbol
             return :a.method(name).source_location
-          when klass == Fixnum
+          when klass == Integer
             return 0.method(name).source_location
           when klass == TrueClass
             return true.method(name).source_location
