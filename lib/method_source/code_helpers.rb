@@ -6,14 +6,14 @@ module MethodSource
     # This is useful to get module or method source code.
     #
     # @param [Array<String>, File, String] file  The file to parse, either as a File or as
-    # @param [Fixnum]  line_number  The line number at which to look.
+    # @param [Integer]  line_number  The line number at which to look.
     #                             NOTE: The first line in a file is
     #                           line 1!
     # @param [Hash] options The optional configuration parameters.
     # @option options [Boolean] :strict  If set to true, then only completely
     #   valid expressions are returned. Otherwise heuristics are used to extract
     #   expressions that may have been valid inside an eval.
-    # @option options [Fixnum] :consume  A number of lines to automatically
+    # @option options [Integer] :consume  A number of lines to automatically
     #   consume (add to the expression buffer) without checking for validity.
     # @return [String]  The first complete expression
     # @raise [SyntaxError]  If the first complete expression can't be identified
@@ -46,7 +46,7 @@ module MethodSource
     #
     # @param [Array<String>, File, String] file  The file to parse, either as a File or as
     #                                            a String or an Array of lines.
-    # @param [Fixnum]  line_number  The line number at which to look.
+    # @param [Integer]  line_number  The line number at which to look.
     #                             NOTE: The first line in a file is line 1!
     # @return [String]  The comment
     def comment_describing(file, line_number)
@@ -84,7 +84,7 @@ module MethodSource
     # Get the first expression from the input.
     #
     # @param [Array<String>]  lines
-    # @param [Fixnum] consume A number of lines to automatically
+    # @param [Integer] consume A number of lines to automatically
     #   consume (add to the expression buffer) without checking for validity.
     # @yield a clean-up function to run before checking for complete_expression
     # @return [String]  a valid ruby expression

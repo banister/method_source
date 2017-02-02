@@ -13,7 +13,7 @@ describe MethodSource do
     end
 
     it 'should not raise for immediate instance methods' do
-      [Symbol, Fixnum, TrueClass, FalseClass, NilClass].each do |immediate_class|
+      [Symbol, Integer, TrueClass, FalseClass, NilClass].each do |immediate_class|
         lambda { immediate_class.instance_method(:to_s).source_location }.should.not.raise
       end
     end
