@@ -6,6 +6,7 @@ direc = File.dirname(__FILE__)
 require "#{direc}/method_source/version"
 require "#{direc}/method_source/source_location"
 require "#{direc}/method_source/code_helpers"
+require "#{direc}/method_source/irb"
 
 module MethodSource
   extend MethodSource::CodeHelpers
@@ -49,6 +50,7 @@ module MethodSource
   # @return [Array<String>]  the contents of the file
   # @raise [SourceNotFoundError]
   def self.lines_for(file_name, name=nil)
+    return IRB.CurrentContext.source if file_name == "(irb)"
     @lines_for_file ||= {}
     @lines_for_file[file_name] ||= File.readlines(file_name)
   rescue Errno::ENOENT => e

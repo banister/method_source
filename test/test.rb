@@ -2,6 +2,7 @@ direc = File.expand_path(File.dirname(__FILE__))
 
 require 'rubygems'
 require 'bacon'
+require 'shellwords'
 require "#{direc}/../lib/method_source"
 require "#{direc}/test_helper"
 
@@ -135,4 +136,21 @@ describe MethodSource do
       method(:comment_test5).comment.should == @comment5
     end
   end
+
+  it "should work in irb" do
+    lib_path = File.join(File.dirname(__FILE__), "../lib")
+    command = [
+      "irb",
+      "-I", lib_path,
+    ].shelljoin
+    output = IO.popen(command, "r+") do |io|
+      io.puts 'require "method_source"'
+      io.puts 'l = lambda { }'
+      io.puts 'puts "l = #{l.source.inspect}"'
+      io.close_write
+      io.read
+    end
+    output.should.include 'l = "l = lambda { }\n"'
+  end
+
 end
