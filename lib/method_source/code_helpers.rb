@@ -71,8 +71,7 @@ module MethodSource
         eval("BEGIN{throw :valid}\n#{str}")
       end
 
-      # Assert that a line which ends with a , or \ is incomplete.
-      str !~ /[,\\]\s*\z/
+      no_ending_comma?(str) || backslashed_string?(str)
     rescue IncompleteExpression
       false
     ensure
@@ -80,6 +79,32 @@ module MethodSource
     end
 
     private
+
+    # Determine if a representation of a string as a string ends with comma.
+    #
+    # @param [String] The string to validate.
+    # @return [Boolean] Whether or not the string ends with comma
+    def no_ending_comma?(str)
+      str !~ /[,\\]\s*\z/
+    end
+
+    # Determine if a backslashed string as a string,
+    #   after removing the matching backslashes, ends with
+    #   comma or a backslash.
+    #
+    # @param [String] The string to validate.
+    # @return [Boolean] Whether or not the remaining string ends with
+    #   comma or backslash.
+    #
+    # @example
+    #   backslashed_string?("%\a\\") #=> true
+    #   backslashed_string?("%\\\\") #=> true
+    #   backslashed_string?("%\abc\\") #=> true
+    def backslashed_string?(str)
+      remaining_str = str[/%\\(.*)\\\s*\z/, 1]
+
+      !remaining_str.nil? && remaining_str !~ /[,\\]\s*\z/
+    end
 
     # Get the first expression from the input.
     #
