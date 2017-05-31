@@ -1,3 +1,5 @@
+# To use rbx environment.
+dist: trusty
 bundler_args: "--verbose"
 before_install:
   - gem update --system
@@ -5,10 +7,9 @@ before_install:
   - gem update bundler
 rvm:
   - 1.8.7
-  - 1.9.2
   - 1.9.3
   - ree
-  - rbx
+  - rbx-3
   - jruby
   - jruby-head
   - 2.0.0
@@ -21,7 +22,7 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
-    - rvm: rbx
+    - rvm: rbx-3
   fast_finish: true
 notifications:
   irc: "irc.freenode.org#pry"

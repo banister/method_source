@@ -20,16 +20,17 @@ def apply_spec_defaults(s)
   s.description = s.summary
   s.require_path = 'lib'
 
-  s.add_development_dependency("bacon","~>1.1.0")
+  s.add_development_dependency("rspec","~>3.6")
   s.add_development_dependency("rake", "~>0.9")
   s.homepage = "http://banisterfiend.wordpress.com"
   s.has_rdoc = 'yard'
   s.files = `git ls-files`.split("\n")
-  s.test_files = `git ls-files -- test/*`.split("\n")
+  s.test_files = `git ls-files -- spec/*`.split("\n")
 end
 
-task :test do
-  sh "bacon -q #{direc}/test/test.rb #{direc}/test/test_code_helpers.rb"
+require "rspec/core/rake_task"
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.ruby_opts = %w[-w]
 end
 
 desc "reinstall gem"
@@ -39,7 +40,7 @@ task :reinstall => :gems do
 end
 
 desc "Set up and run tests"
-task :default => [:test]
+task :default => [:spec]
 
 desc "Build the gemspec file"
 task :gemspec => "ruby:gemspec"
