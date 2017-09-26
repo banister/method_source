@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe MethodSource::CodeHelpers do
   before do
     @tester = Object.new.extend(MethodSource::CodeHelpers)
@@ -17,9 +19,9 @@ describe MethodSource::CodeHelpers do
   ].each do |lines|
     it "should not raise an error on broken lines: #{lines.join("\\n")}" do
       1.upto(lines.size - 1) do |i|
-        @tester.complete_expression?(lines[0...i].join("\n") + "\n").should == false
+        expect(@tester.complete_expression?(lines[0...i].join("\n") + "\n")).to be_falsy
       end
-      @tester.complete_expression?(lines.join("\n")).should == true
+      expect(@tester.complete_expression?(lines.join("\n"))).to be_truthy
     end
   end
 
@@ -33,9 +35,9 @@ describe MethodSource::CodeHelpers do
     ["o = Object.new.tap{ def o.render;","'MEH'", "}"] # in this case the syntax error is "expecting keyword_end".
   ]).compact.each do |foo|
     it "should raise an error on invalid syntax like #{foo.inspect}" do
-      lambda{
+      expect {
         @tester.complete_expression?(foo.join("\n"))
-      }.should.raise(SyntaxError)
+      }.to raise_error(SyntaxError)
     end
   end
 end

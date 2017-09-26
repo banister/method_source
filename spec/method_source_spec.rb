@@ -1,26 +1,25 @@
-direc = File.expand_path(File.dirname(__FILE__))
-
-require 'rubygems'
-require 'bacon'
-require "#{direc}/../lib/method_source"
-require "#{direc}/test_helper"
+require 'spec_helper'
 
 describe MethodSource do
 
   describe "source_location (testing 1.8 implementation)" do
     it 'should return correct source_location for a method' do
-      method(:hello).source_location.first.should =~ /test_helper/
+      expect(method(:hello).source_location.first).to match(/spec_helper/)
     end
 
     it 'should not raise for immediate instance methods' do
       [Symbol, Integer, TrueClass, FalseClass, NilClass].each do |immediate_class|
-        lambda { immediate_class.instance_method(:to_s).source_location }.should.not.raise
+        expect do
+          immediate_class.instance_method(:to_s).source_location
+        end.not_to raise_error
       end
     end
 
     it 'should not raise for immediate methods' do
       [:a, 1, true, false, nil].each do |immediate|
-        lambda { immediate.method(:to_s).source_location }.should.not.raise
+        expect do
+          immediate.method(:to_s).source_location
+        end.not_to raise_error
       end
     end
   end
@@ -40,49 +39,55 @@ describe MethodSource do
   end
 
   it 'should define methods on Method and UnboundMethod and Proc' do
-    Method.method_defined?(:source).should == true
-    UnboundMethod.method_defined?(:source).should == true
-    Proc.method_defined?(:source).should == true
+    expect(Method.method_defined?(:source)).to be_truthy
+    expect(UnboundMethod.method_defined?(:source)).to be_truthy
+    expect(Proc.method_defined?(:source)).to be_truthy
   end
 
   describe "Methods" do
     it 'should return source for method' do
-      method(:hello).source.should == @hello_source
+      expect(method(:hello).source).to eq(@hello_source)
     end
 
     it 'should return source for a method defined in a module' do
-      M.instance_method(:hello).source.should == @hello_module_source
+      expect(M.instance_method(:hello).source).to eq(@hello_module_source)
     end
 
     it 'should return source for a singleton method as an instance method' do
-      class << $o; self; end.instance_method(:hello).source.should == @hello_singleton_source
+      expect(class << $o
+        self
+      end.instance_method(:hello).source).to eq(@hello_singleton_source)
     end
 
     it 'should return source for a singleton method' do
-      $o.method(:hello).source.should == @hello_singleton_source
+      expect($o.method(:hello).source).to eq(@hello_singleton_source)
     end
 
     it 'should return a comment for method' do
-      method(:hello).comment.should == @hello_comment
+      expect(method(:hello).comment).to eq(@hello_comment)
     end
 
     # These tests fail because of http://jira.codehaus.org/browse/JRUBY-4576
     unless defined?(RUBY_ENGINE) && RUBY_ENGINE == "jruby"
       it 'should return source for an *_evaled method' do
-        M.method(:hello_name).source.should == @hello_instance_evaled_source
-        M.method(:name_two).source.should == @hello_instance_evaled_source_2
-        M.instance_method(:hello_name).source.should == @hello_class_evaled_source
-        M.instance_method(:hi_name).source.should == @hi_module_evaled_source
+        expect(M.method(:hello_name).source).to eq(@hello_instance_evaled_source)
+        expect(M.method(:name_two).source).to eq(@hello_instance_evaled_source_2)
+        expect(M.instance_method(:hello_name).source).to eq(@hello_class_evaled_source)
+        expect(M.instance_method(:hi_name).source).to eq(@hi_module_evaled_source)
       end
     end
 
     it "should raise error for evaled methods that do not pass __FILE__ and __LINE__ + 1 as its arguments" do
-      lambda { M.instance_method(:name_three).source }.should.raise MethodSource::SourceNotFoundError
+      expect do
+        M.instance_method(:name_three).source
+      end.to raise_error(MethodSource::SourceNotFoundError)
     end
 
     if !is_rbx?
       it 'should raise for C methods' do
-        lambda { method(:puts).source }.should.raise MethodSource::SourceNotFoundError
+        expect do
+          method(:puts).source
+        end.to raise_error(MethodSource::SourceNotFoundError)
       end
     end
   end
@@ -90,19 +95,19 @@ describe MethodSource do
   # if RUBY_VERSION =~ /1.9/ || is_rbx?
   describe "Lambdas and Procs" do
     it 'should return source for proc' do
-      MyProc.source.should == @proc_source
+      expect(MyProc.source).to eq(@proc_source)
     end
 
     it 'should return an empty string if there is no comment' do
-      MyProc.comment.should == ''
+      expect(MyProc.comment).to eq('')
     end
 
     it 'should return source for lambda' do
-      MyLambda.source.should == @lambda_source
+      expect(MyLambda.source).to eq(@lambda_source)
     end
 
     it 'should return comment for lambda' do
-      MyLambda.comment.should == @lambda_comment
+      expect(MyLambda.comment).to eq(@lambda_comment)
     end
   end
   # end
@@ -116,23 +121,23 @@ describe MethodSource do
     end
 
     it "should correctly extract multi-line comments" do
-      method(:comment_test1).comment.should == @comment1
+      expect(method(:comment_test1).comment).to eq(@comment1)
     end
 
     it "should correctly strip leading whitespace before comments" do
-      method(:comment_test2).comment.should == @comment2
+      expect(method(:comment_test2).comment).to eq(@comment2)
     end
 
     it "should keep empty comment lines" do
-      method(:comment_test3).comment.should == @comment3
+      expect(method(:comment_test3).comment).to eq(@comment3)
     end
 
     it "should ignore blank lines between comments" do
-      method(:comment_test4).comment.should == @comment4
+      expect(method(:comment_test4).comment).to eq(@comment4)
     end
 
     it "should align all comments to same indent level" do
-      method(:comment_test5).comment.should == @comment5
+      expect(method(:comment_test5).comment).to eq(@comment5)
     end
   end
 end

@@ -1,3 +1,6 @@
+require 'method_source'
+require 'rspec'
+
 def is_rbx?
   defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /rbx/
 end
