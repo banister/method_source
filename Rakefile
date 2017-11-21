@@ -19,6 +19,7 @@ def apply_spec_defaults(s)
   s.email = 'jrmair@gmail.com'
   s.description = s.summary
   s.require_path = 'lib'
+  s.license = 'MIT'
 
   s.add_development_dependency("rspec","~>3.6")
   s.add_development_dependency("rake", "~>0.9")
