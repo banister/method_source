@@ -1,6 +1,9 @@
 module MethodSource
 
   module CodeHelpers
+    # @return [Boolean]
+    JRUBY_9200 = (defined?(JRUBY_VERSION) || false) && JRUBY_VERSION == '9.2.0.0'
+
     # Retrieve the first expression starting on the given line of the given file.
     #
     # This is useful to get module or method source code.
@@ -29,6 +32,26 @@ module MethodSource
 
       extract_first_expression(relevant_lines, options[:consume])
     rescue SyntaxError => e
+      # JRuby 9.2.0.0 breaks #source_location for Procs (it reports line number
+      # as the last line of the Proc). This raises SyntaxError.
+      # See https://github.com/pry/pry/issues/1804 for details.
+      #
+      # To fix this, this hack rewinds source location one step at a time and
+      # tries to see if the new location is a complete expression.
+      #
+      # TODO: delete this once latest JRuby version is bumped.
+      # See https://github.com/banister/method_source/issues/52
+      if JRUBY_9200 && line_number > 0
+        loop do
+          line_number -= 1
+
+          # Skip empty lines since they are not real expressions.
+          break unless lines[line_number - 1] == "\n"
+        end
+
+        retry
+      end
+
       raise if options[:strict]
 
       begin

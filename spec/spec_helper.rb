@@ -49,8 +49,10 @@ def comment_test5; end
 
 # This is a comment for MyLambda
 MyLambda = lambda { :lambda }
-MyProc = Proc.new { :proc }
+MyProc = Proc.new do
 
+
+end
 
 name = "name"
 
@@ -98,4 +100,3 @@ EOF
 # class_eval without filename and lineno + 1 parameter
 
 M.class_eval "def #{name}_three; @tempfile.#{name}; end"
-
