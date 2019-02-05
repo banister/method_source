@@ -22,7 +22,7 @@ It is written in pure Ruby (no C).
 `UnboundMethod` and `Proc` classes.
 
 * Install the [gem](https://rubygems.org/gems/method_source): `gem install method_source`
-* Read the [documentation](http://rdoc.info/github/banister/method_source/master/file/README.markdown)
+* Read the [documentation](https://www.rubydoc.info/github/banister/method_source/master)
 * See the [source code](http://github.com/banister/method_source)
 
 Example: display method source
