@@ -68,7 +68,7 @@ module MethodSource
       $VERBOSE = nil
 
       catch(:valid) do
-        eval("BEGIN{throw :valid}\n#{str}")
+        eval("BEGIN{throw :valid};#{str}")
       end
 
       # Assert that a line which ends with a , or \ is incomplete.
