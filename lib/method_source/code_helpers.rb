@@ -67,8 +67,12 @@ module MethodSource
       old_verbose = $VERBOSE
       $VERBOSE = nil
 
-      catch(:valid) do
-        eval("BEGIN{throw :valid}\n#{str}")
+      begin
+        catch(:valid) do
+          eval("BEGIN{throw :valid}\n#{str}")
+        end
+      rescue SyntaxError => e
+        raise SyntaxError, e.message.sub(/^\(eval\):(\d+)/){"(eval):#{$1.to_i - 1}"}
       end
 
       # Assert that a line which ends with a , or \ is incomplete.
