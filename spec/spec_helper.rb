@@ -82,14 +82,14 @@ METHOD
 M.instance_eval <<EOF, __FILE__, __LINE__ + 1
 
   def #{name}_one()
-    if 43
+    if 40 + 3
       44
     end
   end
 
 
   def #{name}_two()
-    if 44
+    if 40 + 4
       45
     end
   end
