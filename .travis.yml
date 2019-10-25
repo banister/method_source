@@ -2,7 +2,6 @@
 dist: trusty
 bundler_args: "--verbose"
 before_install:
-  - gem update --system
   - which bundle || gem install bundler
   - gem update bundler
 rvm:
