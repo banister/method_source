@@ -2,7 +2,6 @@
 dist: trusty
 bundler_args: "--verbose"
 before_install:
-  - gem update --system
   - which bundle || gem install bundler
   - gem update bundler
 rvm:
@@ -12,11 +11,13 @@ rvm:
   - rbx-3
   - jruby
   - jruby-head
-  - 2.0.0
-  - 2.1
-  - 2.2
-  - 2.3
-  - 2.4.2
+  - "2.0"
+  - "2.1"
+  - "2.2"
+  - "2.3"
+  - "2.4"
+  - "2.5"
+  - "2.6"
   - ruby-head
 matrix:
   allow_failures:

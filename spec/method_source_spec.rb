@@ -33,7 +33,7 @@ describe MethodSource do
     @lambda_source = "MyLambda = lambda { :lambda }\n"
     @proc_source = "MyProc = Proc.new { :proc }\n"
     @hello_instance_evaled_source = "  def hello_\#{name}(*args)\n    send_mesg(:\#{name}, *args)\n  end\n"
-    @hello_instance_evaled_source_2 = "  def \#{name}_two()\n    if 44\n      45\n    end\n  end\n"
+    @hello_instance_evaled_source_2 = "  def \#{name}_two()\n    if 40 + 4\n      45\n    end\n  end\n"
     @hello_class_evaled_source = "  def hello_\#{name}(*args)\n    send_mesg(:\#{name}, *args)\n  end\n"
     @hi_module_evaled_source = "  def hi_\#{name}\n    @var = \#{name}\n  end\n"
   end
