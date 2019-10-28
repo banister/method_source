@@ -125,7 +125,7 @@ module MethodSource
       GENERIC_REGEXPS = [
         /unexpected (\$end|end-of-file|end-of-input|END_OF_FILE)/, # mri, jruby, ruby-2.0, ironruby
         /embedded document meets end of file/, # =begin
-        /unterminated (quoted string|string|regexp) meets end of file/, # "quoted string" is ironruby
+        /unterminated (quoted string|string|regexp|list) meets end of file/, # "quoted string" is ironruby
         /can't find string ".*" anywhere before EOF/, # rbx and jruby
         /missing 'end' for/, /expecting kWHEN/ # rbx
       ]
