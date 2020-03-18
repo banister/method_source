@@ -1,5 +1,7 @@
-method_source [![Build Status](https://travis-ci.org/banister/method_source.svg?branch=master)](https://travis-ci.org/banister/method_source)
+method_source
 =============
+
+[![Circle Build Status](https://circleci.com/gh/banister/method_source.svg?style=shield)](https://circleci.com/gh/banister/method_source)
 
 (C) John Mair (banisterfiend) 2011
 

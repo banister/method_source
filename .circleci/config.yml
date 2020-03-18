@@ -27,6 +27,7 @@ jobs:
       - image: kyrylo/ruby-1.9.3p551
     working_directory: /home/circleci/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -35,6 +36,7 @@ jobs:
       - image: kyrylo/ruby-2.0.0p648
     working_directory: /home/circleci/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -43,6 +45,7 @@ jobs:
       - image: circleci/ruby:2.1
     working_directory: ~/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -51,6 +54,7 @@ jobs:
       - image: circleci/ruby:2.2
     working_directory: ~/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -59,6 +63,7 @@ jobs:
       - image: circleci/ruby:2.3
     working_directory: ~/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -67,6 +72,7 @@ jobs:
       - image: circleci/ruby:2.4
     working_directory: ~/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -75,6 +81,7 @@ jobs:
       - image: circleci/ruby:2.5
     working_directory: ~/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -83,6 +90,7 @@ jobs:
       - image: circleci/ruby:2.6
     working_directory: ~/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -91,6 +99,7 @@ jobs:
       - image: circleci/ruby:2.7.0
     working_directory: ~/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -99,6 +108,7 @@ jobs:
       - image: circleci/jruby:9.1-jdk
     working_directory: ~/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
@@ -107,6 +117,7 @@ jobs:
       - image: circleci/jruby:9.2-jdk
     working_directory: ~/method_source
     steps:
+      - checkout
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
