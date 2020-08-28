@@ -121,6 +121,16 @@ jobs:
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
+  truffleruby-head:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+    - checkout
+    - <<: *bundle_install
+    - <<: *unit
 
 workflows:
   version: 2
@@ -137,3 +147,4 @@ workflows:
       - "ruby-2.7"
       - "jruby-9.1-jdk"
       - "jruby-9.2-jdk"
+      - truffleruby-head
