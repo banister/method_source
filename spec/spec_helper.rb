@@ -10,8 +10,14 @@ def jruby?
 end
 
 
+# This is a comment for module
 module M
   def hello; :hello_module; end
+end
+
+# This is a comment for class
+class C
+  include M
 end
 
 $o = Object.new

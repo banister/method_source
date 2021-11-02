@@ -50,6 +50,14 @@ Example: display method comments
     # Merges the elements of the given enumerable object to the set and
     # returns self.
 
+Example: display module/class comments
+--------------------------------------
+
+    MethodSource::MethodExtensions.method(:included).module_comment
+    # =>
+    # This module is to be included by `Method` and `UnboundMethod` and
+    # provides the `#source` functionality
+
 Limitations:
 ------------
 
