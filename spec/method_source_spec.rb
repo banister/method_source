@@ -30,6 +30,8 @@ describe MethodSource do
     @hello_source = "def hello; :hello; end\n"
     @hello_comment = "# A comment for hello\n# It spans two lines and is indented by 2 spaces\n"
     @lambda_comment = "# This is a comment for MyLambda\n"
+    @module_comment = "# This is a comment for module\n"
+    @class_comment = "# This is a comment for class\n"
     @lambda_source = "MyLambda = lambda { :lambda }\n"
     @proc_source = "MyProc = Proc.new { :proc }\n"
     @hello_instance_evaled_source = "  def hello_\#{name}(*args)\n    send_mesg(:\#{name}, *args)\n  end\n"
@@ -108,6 +110,18 @@ describe MethodSource do
 
     it 'should return comment for lambda' do
       expect(MyLambda.comment).to eq(@lambda_comment)
+    end
+
+    it 'should return comment for module' do
+      expect(M.instance_method(:hello).module_comment).to eq(@module_comment)
+    end
+
+    it 'should return comment for class' do
+      expect(C.method(:hello).class_comment).to eq(@class_comment)
+    end
+
+    it 'should return comment for class instance' do
+      expect(C.new.method(:hello).class_comment).to eq(@class_comment)
     end
   end
   # end
