@@ -55,6 +55,11 @@ module MethodSource
     raise SourceNotFoundError, "Could not load source for #{name}: #{e.message}"
   end
 
+  # Clear cache.
+  def self.clear_cache
+    @lines_for_file = {}
+  end
+
   # @deprecated — use MethodSource::CodeHelpers#complete_expression?
   def self.valid_expression?(str)
     complete_expression?(str)
