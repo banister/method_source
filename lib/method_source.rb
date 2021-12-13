@@ -49,8 +49,7 @@ module MethodSource
   # @return [Array<String>]  the contents of the file
   # @raise [SourceNotFoundError]
   def self.lines_for(file_name, name=nil)
-    @lines_for_file ||= {}
-    @lines_for_file[file_name] ||= File.readlines(file_name)
+    File.readlines(file_name)
   rescue Errno::ENOENT => e
     raise SourceNotFoundError, "Could not load source for #{name}: #{e.message}"
   end
