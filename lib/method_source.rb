@@ -49,6 +49,13 @@ module MethodSource
   # @return [Array<String>]  the contents of the file
   # @raise [SourceNotFoundError]
   def self.lines_for(file_name, name=nil)
+    if file_name == '(irb)' && defined?(IRB)
+      # we can't memoize, because this "file" is always growing. presumably if you're
+      # overwriting methods in an IRB session, you're not too concerned about performance
+      # anyway
+      return IRB.CurrentContext.io.instance_variable_get(:@line).join.split(/(?<=\n)/)
+    end
+
     @lines_for_file ||= {}
     @lines_for_file[file_name] ||= File.readlines(file_name)
   rescue Errno::ENOENT => e
