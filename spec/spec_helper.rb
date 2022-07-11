@@ -105,3 +105,10 @@ EOF
 
 M.class_eval "def #{name}_three; @tempfile.#{name}; end"
 
+# multiline method call
+def save_block(&block)
+  block
+end
+
+MultilineMethodBlock = save_block(
+  ) {}
