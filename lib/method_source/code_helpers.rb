@@ -25,18 +25,28 @@ module MethodSource
 
       lines = file.is_a?(Array) ? file : file.each_line.to_a
 
-      relevant_lines = lines[(line_number - 1)..-1] || []
-
-      extract_first_expression(relevant_lines, options[:consume])
-    rescue SyntaxError => e
-      raise if options[:strict]
-
       begin
-        extract_first_expression(relevant_lines) do |code|
-          code.gsub(/\#\{.*?\}/, "temp")
+        relevant_lines = lines[(line_number - 1)..-1] || []
+
+        extract_first_expression(relevant_lines, options[:consume])
+      rescue SyntaxError => e
+        raise if options[:strict]
+
+        # blocks may be part of a multiline method call,
+        # and aren't valid if you cut off previous lines
+        if options[:block] && line_number > 1
+          # search backwards until it's valid
+          line_number -= 1
+          retry          
         end
-      rescue SyntaxError
-        raise e
+
+        begin
+          extract_first_expression(relevant_lines) do |code|
+            code.gsub(/\#\{.*?\}/, "temp")
+          end
+        rescue SyntaxError
+          raise e
+        end
       end
     end
 

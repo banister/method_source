@@ -20,13 +20,17 @@ module MethodSource
   # @param [Array] source_location The array returned by Method#source_location
   # @param [String]  method_name
   # @return [String] The method body
-  def self.source_helper(source_location, name=nil)
+  def self.source_helper(source_location, name=nil, options={})
     raise SourceNotFoundError, "Could not locate source for #{name}!" unless source_location
     file, line = *source_location
 
-    expression_at(lines_for(file), line)
+    expression_at(lines_for(file), line, options)
   rescue SyntaxError => e
     raise SourceNotFoundError, "Could not parse source for #{name}: #{e.message}"
+  end
+
+  def self.expression_options
+    {}
   end
 
   # Helper method responsible for opening source file and buffering up
@@ -158,6 +162,12 @@ module MethodSource
     end
     alias module_comment class_comment
   end
+
+  module ProcExtensions
+    def source
+      MethodSource.source_helper(source_location, defined?(name) ? name : inspect, block: true)
+    end
+  end
 end
 
 class Method
@@ -173,5 +183,6 @@ end
 class Proc
   include MethodSource::SourceLocation::ProcExtensions
   include MethodSource::MethodExtensions
+  include MethodSource::ProcExtensions
 end
 
