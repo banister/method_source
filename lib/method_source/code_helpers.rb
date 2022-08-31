@@ -116,9 +116,16 @@ module MethodSource
         end
 
         if starts_with_comment || (line =~ /^\s*$/)
-          buffer << line.lstrip
+          # this works
+          buffer += line.lstrip
+          # this breaks with Ruby 2.7.2p137: execution doesn't
+          # continue past it and no exception is raised
+          # buffer << line.lstrip
         else
-          buffer.replace("")
+          # this often breaks
+          # buffer.replace("")
+          # this works
+          buffer = ""
         end
       end
 
