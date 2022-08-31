@@ -103,17 +103,42 @@ module MethodSource
     #
     # @param [Array<String>]  lines
     # @return [String]
-    def extract_last_comment(lines)
+    def extract_last_comment_core(lines)
       buffer = ""
+      found_at_least_one_comment = false
 
       lines.each do |line|
         # Add any line that is a valid ruby comment,
         # but clear as soon as we hit a non comment line.
+        if (line =~ /^\s*#/)
+          found_at_least_one_comment = true
+        end
+
         if (line =~ /^\s*#/) || (line =~ /^\s*$/)
           buffer << line.lstrip
         else
           buffer.replace("")
         end
+      end
+
+      return [ buffer, found_at_least_one_comment ]
+    end
+
+    def extract_last_comment(lines)
+      found_at_least_one_comment = false
+      lines_threshold = 100
+
+      if lines.size > lines_threshold
+        # if the last comment is found over fewer lines then don't
+        # need to go over all lines
+        index_start = (lines.size-lines_threshold)
+        index_start = 0 if index_start < 0
+        index_stop = (lines.size-1)
+        buffer, found_at_least_one_comment = extract_last_comment_core(lines[index_start..index_stop])
+      end
+
+      if not found_at_least_one_comment
+        buffer, found_at_least_one_comment = extract_last_comment_core(lines)
       end
 
       buffer
