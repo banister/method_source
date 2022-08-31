@@ -1,6 +1,9 @@
 module MethodSource
 
   module CodeHelpers
+
+    @@EXTRACT_LAST_COMMENT_THRESHOLD = 100
+
     # Retrieve the first expression starting on the given line of the given file.
     #
     # This is useful to get module or method source code.
@@ -134,12 +137,11 @@ module MethodSource
 
     def extract_last_comment(lines)
       found_at_least_one_comment = false
-      lines_threshold = 100
 
-      if lines.size > lines_threshold
+      if lines.size > @@EXTRACT_LAST_COMMENT_THRESHOLD
         # if the last comment is found over fewer lines then don't
         # need to go over all lines
-        index_start = (lines.size-lines_threshold)
+        index_start = (lines.size - @@EXTRACT_LAST_COMMENT_THRESHOLD)
         index_start = 0 if index_start < 0
         index_stop = (lines.size-1)
         buffer, found_at_least_one_comment = extract_last_comment_core(lines[index_start..index_stop])
