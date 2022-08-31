@@ -110,11 +110,12 @@ module MethodSource
       lines.each do |line|
         # Add any line that is a valid ruby comment,
         # but clear as soon as we hit a non comment line.
-        if (line =~ /^\s*#/)
+        starts_with_comment = (line =~ /^\s*#/)
+        if starts_with_comment
           found_at_least_one_comment = true
         end
 
-        if (line =~ /^\s*#/) || (line =~ /^\s*$/)
+        if starts_with_comment || (line =~ /^\s*$/)
           buffer << line.lstrip
         else
           buffer.replace("")
