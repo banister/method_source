@@ -106,7 +106,7 @@ module MethodSource
     def extract_last_comment(lines)
       buffer = []
 
-      lines.reverse.each do |line|
+      lines.reverse_each do |line|
         # Add any line that is a valid ruby comment, and stop as
         # soon as we hit a non comment line.
         if (line =~ /^\s*#/) || (line =~ /^\s*$/)
