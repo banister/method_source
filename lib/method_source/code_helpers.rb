@@ -104,19 +104,19 @@ module MethodSource
     # @param [Array<String>]  lines
     # @return [String]
     def extract_last_comment(lines)
-      buffer = ""
+      buffer = []
 
-      lines.each do |line|
-        # Add any line that is a valid ruby comment,
-        # but clear as soon as we hit a non comment line.
+      lines.reverse_each do |line|
+        # Add any line that is a valid ruby comment, and stop as
+        # soon as we hit a non comment line.
         if (line =~ /^\s*#/) || (line =~ /^\s*$/)
-          buffer << line.lstrip
+          buffer.append(line.lstrip)
         else
-          buffer.replace("")
+          break
         end
       end
 
-      buffer
+      buffer.reverse.join()
     end
 
     # An exception matcher that matches only subsets of SyntaxErrors that can be
