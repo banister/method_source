@@ -1,9 +1,6 @@
 module MethodSource
 
   module CodeHelpers
-
-    @@EXTRACT_LAST_COMMENT_THRESHOLD = 100
-
     # Retrieve the first expression starting on the given line of the given file.
     #
     # This is useful to get module or method source code.
