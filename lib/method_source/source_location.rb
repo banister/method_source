@@ -13,12 +13,12 @@ module MethodSource
         include ReeSourceLocation
 
       elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
-        require 'java'
+        require 'jruby'
 
         # JRuby version source_location hack
         # @return [Array] A two element array containing the source location of the method
         def source_location
-          to_java.source_location(Thread.current.to_java.getContext())
+          to_java.source_location(JRuby.runtime.current_context)
         end
       else
 
@@ -83,12 +83,12 @@ module MethodSource
         include ReeSourceLocation
 
       elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
-        require 'java'
+        require 'jruby'
 
         # JRuby version source_location hack
         # @return [Array] A two element array containing the source location of the method
         def source_location
-          to_java.source_location(Thread.current.to_java.getContext())
+          to_java.source_location(JRuby.runtime.current_context)
         end
 
       else
