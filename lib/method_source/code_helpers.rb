@@ -90,7 +90,7 @@ module MethodSource
     # @return [String]  a valid ruby expression
     # @raise [SyntaxError]
     def extract_first_expression(lines, consume=0, &block)
-      code = consume.zero? ? "" : lines.slice!(0..(consume - 1)).join
+      code = consume.zero? ? +"" : lines.slice!(0..(consume - 1)).join
 
       lines.each do |v|
         code << v
@@ -104,7 +104,7 @@ module MethodSource
     # @param [Array<String>]  lines
     # @return [String]
     def extract_last_comment(lines)
-      buffer = ""
+      buffer = +""
 
       lines.each do |line|
         # Add any line that is a valid ruby comment,
@@ -112,7 +112,7 @@ module MethodSource
         if (line =~ /^\s*#/) || (line =~ /^\s*$/)
           buffer << line.lstrip
         else
-          buffer.replace("")
+          buffer.clear
         end
       end
 
