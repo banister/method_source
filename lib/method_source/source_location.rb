@@ -13,15 +13,8 @@ module MethodSource
         include ReeSourceLocation
 
       elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
-        require 'java'
-
-        # JRuby version source_location hack
-        # @return [Array] A two element array containing the source location of the method
-        def source_location
-          to_java.source_location(Thread.current.to_java.getContext())
-        end
+        # noop - source_location provided natively
       else
-
 
         def trace_func(event, file, line, id, binding, classname)
           return unless event == 'call'
@@ -83,16 +76,8 @@ module MethodSource
         include ReeSourceLocation
 
       elsif defined?(RUBY_ENGINE) && RUBY_ENGINE =~ /jruby/
-        require 'java'
-
-        # JRuby version source_location hack
-        # @return [Array] A two element array containing the source location of the method
-        def source_location
-          to_java.source_location(Thread.current.to_java.getContext())
-        end
-
+        # noop - source_location provided natively
       else
-
 
         # Return the source location of an instance method for Ruby 1.8.
         # @return [Array] A two element array. First element is the
